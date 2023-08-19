@@ -1,6 +1,6 @@
 import unittest
 
-from game.tiles import (Tile, BagTiles  )
+from game.tiles import (Tile, BagTiles)
 
 class TestTile(unittest.TestCase):
     def test_tile_creation(self):
@@ -25,7 +25,45 @@ class TestBagTiles(unittest.TestCase):
         tiles_to_put = [Tile('A', 1), Tile('B', 3)]
         self.bag.put(tiles_to_put)
         new_tile_count = len(self.bag.tiles)
-        self.assertEqual(new_tile_count, initial_tile_count + len(tiles_to_put))
+        self.assertEqual(new_tile_count, initial_tile_count + len(tiles_to_put)) 
+        
+    def test_letter_counts(self):
+        letters_to_test = {
+            'A': 12,
+            'E': 12,
+            'O': 9,
+            'I': 6,
+            'S': 6,
+            'N': 5,
+            'L': 4,
+            'R': 5,
+            'U': 5,
+            'T': 4,
+            'D': 5,
+            'G': 2,
+            'C': 4,
+            'B': 2,
+            'M': 2,
+            'P': 2,
+            'H': 2,
+            'F': 1,
+            'V': 1,
+            'Y': 1,
+            'CH': 1,
+            'Q': 1,
+            'J': 1,
+            'LL': 1,
+            'Ñ': 1,
+            'RR': 1,
+            'X': 1,
+            'Z': 1
+        }
+
+        for letter, expected_count in letters_to_test.items():
+            with self.subTest(letter=letter):
+                count = self.bag.get_letter_count(letter)
+                self.assertEqual(count, expected_count)
+    
 
 if __name__ == '__main__':
     unittest.main()

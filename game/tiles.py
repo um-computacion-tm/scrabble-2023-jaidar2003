@@ -44,6 +44,80 @@ class BagTiles:
         random.shuffle(self.tiles)
 
         self.valid_letters = [letter for letter, _ in letter_scores_es]
+
+        self.tiles = []
+        for letter, value in letter_scores_es:
+            count = 0
+            if letter == 'A':
+                count = 12
+            elif letter == 'E':
+                count = 12
+            elif letter == 'O':
+                count = 9
+            elif letter == 'I':
+                count = 6
+            elif letter == 'S':
+                count = 6
+            elif letter == 'N':
+                count = 5
+            elif letter == 'L':
+                count = 4
+            elif letter == 'R':
+                count = 5
+            elif letter == 'U':
+                count = 5
+            elif letter == 'T':
+                count = 4
+            elif letter == 'D':
+                count = 5
+            elif letter == 'G':
+                count = 2
+            elif letter == 'C':
+                count = 4
+            elif letter == 'B':
+                count = 2
+            elif letter == 'M':
+                count = 2
+            elif letter == 'P':
+                count = 2
+            elif letter == 'H':
+                count = 2
+            elif letter == 'F':
+                count = 1
+            elif letter == 'V':
+                count = 1
+            elif letter == 'Y':
+                count = 1
+            elif letter == 'CH':
+                count = 1
+            elif letter == 'Q':
+                count = 1
+            elif letter == 'J':
+                count = 1
+            elif letter == 'LL':
+                count = 1
+            elif letter == 'Ñ':
+                count = 1
+            elif letter == 'RR':
+                count = 1
+            elif letter == 'X':
+                count = 1
+            elif letter == 'Z':
+                count = 1
+
+            for _ in range(count):
+                self.tiles.append(Tile(letter, value))
+
+        random.shuffle(self.tiles)
+
+        self.valid_letters = [letter for letter, _ in letter_scores_es]
+    
+    def get_letter_count(self, letter):
+        count = 0
+        for tile in self.tiles:
+            if tile.letter == letter:
+                count += 1
+        return count
     
     def take(self, count):
         if count > len(self.tiles):
@@ -56,7 +130,3 @@ class BagTiles:
     def put(self, tiles):
         self.tiles.extend(tiles)
         random.shuffle(self.tiles)
-
-
-if __name__ == '__main__':
-    bag = BagTiles()
