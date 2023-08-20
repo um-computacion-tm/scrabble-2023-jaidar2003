@@ -7,126 +7,83 @@ class Tile:
 
 class BagTiles:
     def __init__(self):
-        letter_scores_es = [
-            ('A', 1),
-            ('B', 3), 
-            ('C', 3),
-            ('CH', 5),
-            ('D', 2), 
-            ('E', 1), 
-            ('F', 4), 
-            ('G', 2),
-            ('H', 4), 
-            ('I', 1), 
-            ('J', 8), 
-            ('L', 1),
-            ('LL', 8),
-            ('M', 3), 
-            ('N', 1),
-            ('Ñ', 8),
-            ('O', 1),
-            ('P', 3), 
-            ('Q', 5), 
-            ('R', 1),
-            ('RR', 8), 
-            ('S', 1),
-            ('T', 1),
-            ('U', 1),
-            ('V', 4),
-            ('X', 8), 
-            ('Y', 4),
-            ('Z', 10),
-            (' ', 0),
-            (' ', 0),
-        ]
-        
-        self.tiles = [Tile(letter, score) for letter, score in letter_scores_es]
+        self.tiles = ['A'] * 9 + ['B'] * 2 + ['C'] * 2 + ['D'] * 4 + ['E'] * 12 + ['F'] * 2 + ['G'] * 3 + ['H'] * 2 + ['I'] * 9 + ['J'] * 1 + ['K'] * 1 + ['L'] * 4 + ['M'] * 2 + ['N'] * 6 + ['O'] * 8 + ['P'] * 2 + ['Q'] * 1 + ['R'] * 6 + ['S'] * 4 + ['T'] * 6 + ['U'] * 4 + ['V'] * 2 + ['W'] * 2 + ['X'] * 1 + ['Y'] * 2 + ['Z'] * 1
         random.shuffle(self.tiles)
+        self.remaining_tiles = self.tiles.copy()
 
-        self.valid_letters = [letter for letter, _ in letter_scores_es]
+    def get_tile_value(self, letter):
+        return {
+            'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1, 'F': 4, 'G': 2, 'H': 4,
+            'I': 1, 'J': 8, 'K': 5, 'L': 1, 'M': 3, 'N': 1, 'O': 1, 'P': 3,
+            'Q': 10, 'R': 1, 'S': 1, 'T': 1, 'U': 1, 'V': 4, 'W': 4, 'X': 8,
+            'Y': 4, 'Z': 10
+        }[letter]
 
-        self.tiles = []
-        for letter, value in letter_scores_es:
-            count = 0
-            if letter == 'A':
-                count = 12
-            elif letter == 'E':
-                count = 12
-            elif letter == 'O':
-                count = 9
-            elif letter == 'I':
-                count = 6
-            elif letter == 'S':
-                count = 6
-            elif letter == 'N':
-                count = 5
-            elif letter == 'L':
-                count = 4
-            elif letter == 'R':
-                count = 5
-            elif letter == 'U':
-                count = 5
-            elif letter == 'T':
-                count = 4
-            elif letter == 'D':
-                count = 5
-            elif letter == 'G':
-                count = 2
-            elif letter == 'C':
-                count = 4
-            elif letter == 'B':
-                count = 2
-            elif letter == 'M':
-                count = 2
-            elif letter == 'P':
-                count = 2
-            elif letter == 'H':
-                count = 2
-            elif letter == 'F':
-                count = 1
-            elif letter == 'V':
-                count = 1
-            elif letter == 'Y':
-                count = 1
-            elif letter == 'CH':
-                count = 1
-            elif letter == 'Q':
-                count = 1
-            elif letter == 'J':
-                count = 1
-            elif letter == 'LL':
-                count = 1
-            elif letter == 'Ñ':
-                count = 1
-            elif letter == 'RR':
-                count = 1
-            elif letter == 'X':
-                count = 1
-            elif letter == 'Z':
-                count = 1
-
-            for _ in range(count):
-                self.tiles.append(Tile(letter, value))
-
-        random.shuffle(self.tiles)
-
-        self.valid_letters = [letter for letter, _ in letter_scores_es]
-    
-    def get_letter_count(self, letter):
-        count = 0
-        for tile in self.tiles:
-            if tile.letter == letter:
-                count += 1
-        return count
-    
-    def take(self, count):
-        if count > len(self.tiles):
-            count = len(self.tiles)
-        tiles = []
+    def draw_tiles(self, count):
+        drawn_tiles = []
         for _ in range(count):
-            tiles.append(self.tiles.pop())
-        return tiles
+            if self.remaining_tiles:
+                drawn_tiles.append(Tile(self.remaining_tiles.pop(), 1))
+        return drawn_tiles
 
-    def put(self, tiles):
-        self.tiles.extend(tiles)
-        random.shuffle(self.tiles)
+    def tiles_remaining(self):
+        return len(self.remaining_tiles)
+
+
+class Board:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.grid = [[' ' for _ in range(cols)] for _ in range(rows)]
+
+    def display(self):
+        for row in self.grid:
+            print(' '.join(row))
+
+    def is_valid_position(self, row, col):
+        return 0 <= row < self.rows and 0 <= col < self.cols
+
+    def place_tile(self, tile, row, col):
+        if self.is_valid_position(row, col):
+            self.grid[row][col] = tile.letter
+            return True
+        return False
+
+class Player:
+    def __init__(self, name, board, bag):
+        self.name = name
+        self.board = board
+        self.bag = bag
+        self.hand = []
+        self.score = 0
+
+    def draw_tiles(self, count):
+        drawn_tiles = self.bag.draw_tiles(count)
+        self.hand.extend(drawn_tiles)
+        return drawn_tiles
+
+    def calculate_score(self, word, row, col, direction):
+        score = 0
+        word_multiplier = 1
+        for i, letter in enumerate(word):
+            tile_value = self.get_tile_value(letter)
+            score += tile_value
+        return score
+
+    def get_tile_value(self, letter):
+        return self.bag.get_tile_value(letter)
+
+    def exchange_tiles(self, tiles_to_exchange):
+        exchanged_tiles = []
+        for tile in tiles_to_exchange:
+            if tile in self.hand:
+                exchanged_tiles.append(tile)
+                self.hand.remove(tile)
+        new_tiles = self.bag.draw_tiles(len(exchanged_tiles))
+        self.hand.extend(new_tiles)
+        return exchanged_tiles
+
+if __name__ == "__main__":
+    bag = BagTiles()
+    board = Board(15, 15)
+    player = Player("Player 1", board, bag)
