@@ -1,5 +1,5 @@
 import unittest
-from game.tiles import Tile, BagTiles, Board, Player, Dictionary
+from game.tiles import Tile, BagTiles, Board, Player, Dictionary, Square
 
 class TestTile(unittest.TestCase):
     def test_tile_creation(self):
@@ -64,8 +64,49 @@ class TestBoardMethods(unittest.TestCase):
         board = Board(5, 5)
         tile = Tile("X", 8)
         result = board.place_tile(tile, 4, 4) 
-        self.assertTrue(result)  # Cambio aquí
+        self.assertTrue(result)  
         self.assertEqual(board.grid[4][4], "X")
+
+class TestSquare(unittest.TestCase):
+    def test_empty_square(self):
+        square = Square()
+        self.assertEqual(square.multiplier, 1)
+        self.assertEqual(square.letter, None)
+
+    def test_square_letter(self):
+        tile = Tile('A', 1)
+        square = Square(letter=tile)
+        self.assertEqual(square.letter, tile)
+
+    def test_square_multiplier(self):
+        square = Square(multiplier=2)
+        self.assertEqual(square.multiplier, 2)
+
+    def test_no_multiplier(self):
+        square = Square()
+        self.assertFalse(square.has_multiplier())
+
+    def test_has_multiplier(self):
+        square = Square(multiplier=2)
+        self.assertTrue(square.has_multiplier())
+
+    def test_no_letter(self):
+        square = Square()
+        self.assertFalse(square.has_multiplier())
+
+    def test_has_letter(self):
+        square = Square(letter=Tile('A', 1))
+        self.assertTrue(square.has_letter())
+
+    def test_insert_letter_full(self):
+        square = Square(letter=Tile('A', 1))
+        square.insert_letter(Tile('B', 1))
+        self.assertEqual(square, square)
+
+    def test_insert_letter_empty(self):
+        square = Square()
+        square.insert_letter((Tile('A', 1)))
+        self.assertEqual(square.letter.letter, 'A')
 
 class TestPlayer(unittest.TestCase):
     def setUp(self):
