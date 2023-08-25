@@ -1,5 +1,13 @@
 import random
 
+class ScrabbleGame:
+    def __init__(self, amount, board, bag):
+        self.board = board
+        self.tilebag = bag
+        self.players = []
+        for i in range(amount):
+            self.players.append(Player(f"Player {i}", self.board, self.tilebag))
+
 class Tile:
     def __init__(self, letter, value):
         self.letter = letter

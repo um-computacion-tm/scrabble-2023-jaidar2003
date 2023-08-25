@@ -1,5 +1,38 @@
 import unittest
-from game.tiles import Tile, BagTiles, Board, Player, Dictionary, Square
+from game.tiles import Tile, BagTiles, Board, Player, Dictionary, Square, ScrabbleGame
+from unittest.mock import Mock
+
+class TestScrabbleGame(unittest.TestCase):
+    def setUp(self):
+        self.bag = BagTiles()
+        self.board = Board(15, 15)
+        self.game = ScrabbleGame(2, self.board, self.bag)
+        self.player = self.game.players[0]  # Get the first player for testing
+
+    def test_draw_tiles(self):
+        initial_hand_size = len(self.player.hand)
+        self.player.draw_tiles(7)
+        new_hand_size = len(self.player.hand)
+        self.assertEqual(new_hand_size, initial_hand_size + 7)
+
+    def test_calculate_player_score(self):
+        word = "HELLO"
+        row, col = 7, 7
+        direction = "horizontal"
+        score = self.player.calculate_score(word, row, col, direction)
+        self.assertEqual(score, 8)  # Example score calculation
+
+    def exchange_tiles(self, tiles_to_exchange):
+        exchanged_tiles = []
+        for tile in tiles_to_exchange:
+            if tile in self.hand:
+                exchanged_tiles.append(tile)
+                self.hand.remove(tile)
+        new_tiles = self.bag.draw_tiles(len(exchanged_tiles))
+        self.hand.extend(new_tiles)
+        return exchanged_tiles
+
+
 
 class TestTile(unittest.TestCase):
     def test_tile_creation(self):
@@ -46,7 +79,8 @@ class TestBagTiles(unittest.TestCase):
         bag = BagTiles()
         bag.draw_tiles(98) 
         drawn_tiles = bag.draw_tiles(1)  
-        self.assertEqual(len(drawn_tiles), 0) 
+        self.assertEqual(len(drawn_tiles), 0)
+
 
 class TestBoardMethods(unittest.TestCase):
     def test_board_creation(self):
@@ -66,6 +100,7 @@ class TestBoardMethods(unittest.TestCase):
         result = board.place_tile(tile, 4, 4) 
         self.assertTrue(result)  
         self.assertEqual(board.grid[4][4], "X")
+
 
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
@@ -107,6 +142,7 @@ class TestSquare(unittest.TestCase):
         square = Square()
         square.insert_letter((Tile('A', 1)))
         self.assertEqual(square.letter.letter, 'A')
+
 
 class TestPlayer(unittest.TestCase):
     def setUp(self):
