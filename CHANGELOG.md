@@ -23,3 +23,7 @@ ADDED:
 0.0.5 - 2023-08-25
 ADDED:
 - Implementation of the ScrabbleGame class.
+
+0.0.6 - 2023-08-27
+ADDED:
+- Small changes on the ScrabbleGame class and test.
