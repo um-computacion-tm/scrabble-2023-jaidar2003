@@ -1,12 +1,25 @@
 import random
 
 class ScrabbleGame:
-    def __init__(self, amount, board, bag):
-        self.board = board
-        self.tilebag = bag
+    def __init__(self, amount):
+        self.board = Board(rows=15, cols=15)
+        self.tilebag = BagTiles()
         self.players = []
+        self.dictionary = Dictionary('dictionaries/dictionary.txt')
         for i in range(amount):
-            self.players.append(Player(f"Player {i}", self.board, self.tilebag))
+            self.players.append(Player(f"Player {i + 1}", self.board, self.tilebag))  # Provide arguments here
+
+    def word_score(self, word: list):
+        score = 0
+        word_multipliers = 0
+        for square in word:
+            if square.word_multiplier is not None:
+                word_multipliers += square.word_multiplier
+                square.multiplier_is_up()
+            score += square.individual_score()
+        if word_multipliers != 0:
+            return score * word_multipliers
+        return score
 
 class Tile:
     def __init__(self, letter, value):
@@ -105,6 +118,7 @@ class Player:
         new_tiles = self.bag.draw_tiles(len(exchanged_tiles))
         self.hand.extend(new_tiles)
         return exchanged_tiles
+    
 
 class Dictionary:
     def __init__(self, file_path):

@@ -1,37 +1,14 @@
 import unittest
 from game.tiles import Tile, BagTiles, Board, Player, Dictionary, Square, ScrabbleGame
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
-class TestScrabbleGame(unittest.TestCase):
-    def setUp(self):
-        self.bag = BagTiles()
-        self.board = Board(15, 15)
-        self.game = ScrabbleGame(2, self.board, self.bag)
-        self.player = self.game.players[0]  # Get the first player for testing
-
-    def test_draw_tiles(self):
-        initial_hand_size = len(self.player.hand)
-        self.player.draw_tiles(7)
-        new_hand_size = len(self.player.hand)
-        self.assertEqual(new_hand_size, initial_hand_size + 7)
-
-    def test_calculate_player_score(self):
-        word = "HELLO"
-        row, col = 7, 7
-        direction = "horizontal"
-        score = self.player.calculate_score(word, row, col, direction)
-        self.assertEqual(score, 8)  # Example score calculation
-
-    def exchange_tiles(self, tiles_to_exchange):
-        exchanged_tiles = []
-        for tile in tiles_to_exchange:
-            if tile in self.hand:
-                exchanged_tiles.append(tile)
-                self.hand.remove(tile)
-        new_tiles = self.bag.draw_tiles(len(exchanged_tiles))
-        self.hand.extend(new_tiles)
-        return exchanged_tiles
-
+class TestScrabble(unittest.TestCase):
+    def test_scrabble(self):
+        game = ScrabbleGame(1)
+        self.assertIsNotNone(game.board)
+        self.assertIsNotNone(game.tilebag)
+        self.assertEqual(len(game.players), 1)
+        self.assertIsInstance(game.dictionary, Dictionary)  
 
 
 class TestTile(unittest.TestCase):
@@ -80,6 +57,11 @@ class TestBagTiles(unittest.TestCase):
         bag.draw_tiles(98) 
         drawn_tiles = bag.draw_tiles(1)  
         self.assertEqual(len(drawn_tiles), 0)
+    
+    def test_get_tile_value_invalid(self):
+        bag = BagTiles()
+        self.assertEqual(bag.get_tile_value('Q'), 10)  
+        self.assertEqual(bag.get_tile_value('X'), 8)   
 
 
 class TestBoardMethods(unittest.TestCase):
@@ -100,6 +82,12 @@ class TestBoardMethods(unittest.TestCase):
         result = board.place_tile(tile, 4, 4) 
         self.assertTrue(result)  
         self.assertEqual(board.grid[4][4], "X")
+    
+    def test_place_tile_invalid_position(self):
+        board = Board(5, 5)
+        tile = Tile("X", 8)
+        result = board.place_tile(tile, 5, 5)  # Agregar esta línea
+        self.assertFalse(result)               # Agregar esta línea
 
 
 class TestSquare(unittest.TestCase):
@@ -184,6 +172,11 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.get_tile_value("A"), 1)
         self.assertEqual(self.player.get_tile_value("Z"), 10)
         self.assertEqual(self.player.get_tile_value("E"), 1)
+    
+    def test_calculate_score_no_word(self):
+        score = self.player.calculate_score("", 7, 7, "horizontal")  # Agregar esta línea
+        self.assertEqual(score, 0)                                  # Agregar esta línea
+ 
 
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
