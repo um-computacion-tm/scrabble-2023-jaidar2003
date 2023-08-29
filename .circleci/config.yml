@@ -3,6 +3,7 @@ jobs:
   build:
     environment:
       CC_TEST_REPORTER_ID: ca3b9bc18c15e2d9c25ecc52a57e09c79269e4397ec77c4a4fb8d8ed89c399f7
+    docker:
       - image: cimg/python:3.10.1
     steps:
       - checkout
