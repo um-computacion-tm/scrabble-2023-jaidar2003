@@ -27,3 +27,7 @@ ADDED:
 0.0.6 - 2023-08-27
 ADDED:
 - Small changes on the ScrabbleGame class and test.
+
+0.0.6 - 2023-08-28
+ADDED:
+-Changes to classes such as Board, Tile, and TileBag; in addition to their respective tests
