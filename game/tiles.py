@@ -11,7 +11,7 @@ class ScrabbleGame:
 
     def word_score(self, word: list):
         score = 0
-        word_multipliers = 1  # Inicializamos a 1 para multiplicar por 1 si no hay multiplicadores de palabra
+        word_multipliers = 1  
         for square in word:
             if square.word_multiplier is not None:
                 word_multipliers *= square.word_multiplier
@@ -116,7 +116,7 @@ class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):
         self.multiplier = multiplier
         self.letter = letter
-        self.word_multiplier = word_multiplier  # Agrega el atributo word_multiplier
+        self.word_multiplier = word_multiplier 
 
     def has_letter(self):
         return self.letter is not None

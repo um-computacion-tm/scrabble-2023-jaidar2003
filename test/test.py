@@ -108,7 +108,7 @@ class TestBagTiles(unittest.TestCase):
         bag = Tilebag()
         self.assertEqual(
             len(bag.tiles),
-            sum(quantity for _, (_, quantity) in LETTER_COUNT.items()),  # Calculate the total quantity
+            sum(quantity for _, (_, quantity) in LETTER_COUNT.items()),  
         )
         self.assertEqual(
             patch_shuffle.call_count,
@@ -174,12 +174,10 @@ class TestBoardMethods(unittest.TestCase):
         self.assertFalse(result)               
 
     def test_place_tile_invalid_position2(self):
-        board = Board(5, 5)  # Initialize the board
+        board = Board(5, 5)  
         tile = Tile("X", 8)
         result = board.place_tile(tile, 5, 5)
         self.assertFalse(result)
-
-
 
 
 class TestSquare(unittest.TestCase):
