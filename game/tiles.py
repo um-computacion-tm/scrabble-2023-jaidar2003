@@ -1,33 +1,96 @@
 import random
 
+class ScrabbleGame:
+    def __init__(self, amount):
+        self.board = Board(rows=15, cols=15)
+        self.tilebag = Tilebag()
+        self.players = []
+        self.dictionary = Dictionary('dictionaries/dictionary.txt')
+        for i in range(amount):
+            self.players.append(Player())
+
+    def word_score(self, word: list):
+        score = 0
+        word_multipliers = 1  
+        for square in word:
+            if square.word_multiplier is not None:
+                word_multipliers *= square.word_multiplier
+                square.multiplier_is_up()
+            score += square.individual_score()
+        return score * word_multipliers
+
+    
+
 class Tile:
     def __init__(self, letter, value):
         self.letter = letter
         self.value = value
 
-class BagTiles:
+    def __eq__(self, other):
+        if isinstance(other, Tile):
+            return self.letter == other.letter and self.value == other.value
+        return False
+
+    def __repr__(self):
+        return f"Tile(letter='{self.letter}', value={self.value})"
+
+    def get_value(self):
+        return self.value
+
+    def get_letter(self):
+        return self.letter
+
+LETTER_COUNT = {
+    'A': (1, 12),
+    'E': (1, 12),
+    'O': (1, 9),
+    'I': (1, 6),
+    'S': (1, 6),
+    'N': (1, 5),
+    'L': (1, 4),
+    'R': (1, 5),
+    'U': (1, 5),
+    'T': (1, 12),
+    'D': (2, 5),
+    'G': (2, 2),
+    'C': (3, 4),
+    'B': (3, 2),
+    'M': (3, 2),
+    'P': (3, 2),
+    'H': (4, 2),
+    'F': (4, 1),
+    'V': (4, 1),
+    'Y': (4, 1),
+    'CH': (5, 1),
+    'Q': (5, 1),
+    'J': (6, 1),
+    'LL': (6, 1),
+    'Ñ': (6, 1),
+    'RR': (6, 1),
+    'X': (6, 1),
+    'Z': (7, 1)
+}
+
+class DrawingMoreThanAvailable(Exception):
+    pass
+
+class Tilebag:
     def __init__(self):
-        self.tiles = ['A'] * 9 + ['B'] * 2 + ['C'] * 2 + ['D'] * 4 + ['E'] * 12 + ['F'] * 2 + ['G'] * 3 + ['H'] * 2 + ['I'] * 9 + ['J'] * 1 + ['K'] * 1 + ['L'] * 4 + ['M'] * 2 + ['N'] * 6 + ['O'] * 8 + ['P'] * 2 + ['Q'] * 1 + ['R'] * 6 + ['S'] * 4 + ['T'] * 6 + ['U'] * 4 + ['V'] * 2 + ['W'] * 2 + ['X'] * 1 + ['Y'] * 2 + ['Z'] * 1
+        self.tiles = []
+        for letter, (quantity, score) in LETTER_COUNT.items():
+            tile = Tile(letter, quantity)
+            self.tiles.extend([tile] * score)
         random.shuffle(self.tiles)
-        self.remaining_tiles = self.tiles.copy()
 
-    def get_tile_value(self, letter):
-        return {
-            'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1, 'F': 4, 'G': 2, 'H': 4,
-            'I': 1, 'J': 8, 'K': 5, 'L': 1, 'M': 3, 'N': 1, 'O': 1, 'P': 3,
-            'Q': 10, 'R': 1, 'S': 1, 'T': 1, 'U': 1, 'V': 4, 'W': 4, 'X': 8,
-            'Y': 4, 'Z': 10
-        }[letter]
+    def take(self, count):
+        random.shuffle(self.tiles)
+        if count > len(self.tiles):
+            raise DrawingMoreThanAvailable
+        tiles = [self.tiles.pop() for _ in range(count)]
+        return tiles
 
-    def draw_tiles(self, count):
-        drawn_tiles = []
-        for _ in range(count):
-            if self.remaining_tiles:
-                drawn_tiles.append(Tile(self.remaining_tiles.pop(), 1))
-        return drawn_tiles
-
-    def tiles_remaining(self):
-        return len(self.remaining_tiles)
+    def put(self, tiles):
+        self.tiles.extend(tiles)
 
 
 class Board:
@@ -50,9 +113,10 @@ class Board:
         return False
 
 class Square:
-    def __init__(self, multiplier: int = 1, letter: Tile = None):
+    def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):
         self.multiplier = multiplier
         self.letter = letter
+        self.word_multiplier = word_multiplier 
 
     def has_letter(self):
         return self.letter is not None
@@ -64,39 +128,37 @@ class Square:
         if not self.has_letter():
             self.letter = letter
 
+    def multiplier_is_up(self):
+        if self.word_multiplier > 1:
+            self.word_multiplier -= 1
+
+    def individual_score(self):
+        return self.letter.get_value() * self.multiplier
+
+    def __repr__(self):
+        return f"Square(multiplier={self.multiplier}, letter={self.letter}, word_multiplier={self.word_multiplier})"
+
+
 class Player:
-    def __init__(self, name, board, bag):
-        self.name = name
-        self.board = board
-        self.bag = bag
-        self.hand = []
+    def __init__(self):
         self.score = 0
+        self.tiles = []
 
-    def draw_tiles(self, count):
-        drawn_tiles = self.bag.draw_tiles(count)
-        self.hand.extend(drawn_tiles)
-        return drawn_tiles
+    def increase_score(self, points):
+        self.score += points
 
-    def calculate_score(self, word, row, col, direction):
-        score = 0
-        word_multiplier = 1
-        for i, letter in enumerate(word):
-            tile_value = self.get_tile_value(letter)
-            score += tile_value
-        return score
+    def draw_tiles(self, bag: Tilebag, num_tiles):
+        self.tiles.extend(bag.take(num_tiles))
 
-    def get_tile_value(self, letter):
-        return self.bag.get_tile_value(letter)
+    def exchange_tile(self, tile, bag: Tilebag):
+        for i, current_tile in enumerate(self.tiles):
+            if current_tile == tile:
+                exchanged_tile = self.tiles.pop(i)
+                bag.put([exchanged_tile])
+                break
 
-    def exchange_tiles(self, tiles_to_exchange):
-        exchanged_tiles = []
-        for tile in tiles_to_exchange:
-            if tile in self.hand:
-                exchanged_tiles.append(tile)
-                self.hand.remove(tile)
-        new_tiles = self.bag.draw_tiles(len(exchanged_tiles))
-        self.hand.extend(new_tiles)
-        return exchanged_tiles
+        self.tiles.extend(bag.take(1))
+
 
 class Dictionary:
     def __init__(self, file_path):
@@ -109,7 +171,9 @@ class Dictionary:
     def has_word(self, word):
         return word in self.words
 
+
+
 if __name__ == "__main__":
-    bag = BagTiles()
+    bag = Tilebag()
     board = Board(15, 15)
-    player = Player("Player 1", board, bag)
+    player = Player()

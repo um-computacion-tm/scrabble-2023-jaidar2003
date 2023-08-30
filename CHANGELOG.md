@@ -14,7 +14,20 @@ ADDED:
 ADDED:
 - Implementation of the Board and Player classes.
 - Added unit tests for the Board and Player classes.
+
 0.0.4 - 2023-08-23
 ADDED:
-- A dicitionary with a .txt file full of spanish word
-- A  Dictionary class  ans their respective test 
+- A dicitionary with a .txt file full of spanish words
+- A  Dictionary class  ans their respective test
+
+0.0.5 - 2023-08-25
+ADDED:
+- Implementation of the ScrabbleGame class.
+
+0.0.6 - 2023-08-27
+ADDED:
+- Small changes on the ScrabbleGame class and test.
+
+0.0.6 - 2023-08-28
+ADDED:
+-Changes to classes such as Board, Tile, and TileBag; in addition to their respective tests
