@@ -147,6 +147,44 @@ class TestBagTiles(unittest.TestCase):
         with self.assertRaises(DrawingMoreThanAvailable):
             bag.take(1000000000)
 
+class TestRack(unittest.TestCase):
+    def test_rack_initialization(self):
+        bag = Tilebag()
+        rack = Rack(bag)
+        self.assertEqual(len(rack.rack), 7)
+
+    def test_rack_add_to_rack(self):
+        bag = Tilebag()
+        rack = Rack(bag)
+        initial_rack_length = len(rack.rack)
+        rack.add_to_rack()
+        self.assertEqual(len(rack.rack), initial_rack_length + 1) 
+    
+    def test_rack_remove_from_rack(self):
+        bag = Tilebag()
+        rack = Rack(bag)
+        initial_rack_length = len(rack.rack)
+        tile = rack.rack[0]
+        rack.remove_from_rack(tile)
+        self.assertEqual(len(rack.rack), initial_rack_length - 1) 
+
+    #def test_rack_replenish_rack(self):
+    #    bag = Tilebag()
+    #     rack = Rack(bag)
+    #     initial_rack_length = len(rack.rack)
+    #     bag_tiles_count = len(bag.tiles)
+        
+        
+    #     removed_tiles = rack.rack[:3]
+    #     rack.rack = rack.rack[3:]
+    #     bag.put(removed_tiles)
+
+    #     rack.replenish_rack()
+
+        
+    #     self.assertEqual(len(rack.rack), 7)
+
+    #     self.assertEqual(len(bag.tiles), bag_tiles_count - 7)
 
 class TestBoardMethods(unittest.TestCase):
     def test_board_creation(self):
