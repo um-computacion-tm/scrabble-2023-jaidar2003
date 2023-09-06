@@ -35,3 +35,7 @@ ADDED:
 0.0.7 - 2023-09-01
 ADDED:
 - Implementation of a Rack class
+
+0.0.7 - 2023-09-05
+ADDED:
+- Small changes on test
