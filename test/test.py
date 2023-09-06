@@ -60,8 +60,7 @@ class TestScrabble(unittest.TestCase):
         calculated_score = game.word_score([board.grid[row][col] for col in range(7, 7 + len(word))])
 
         self.assertEqual(calculated_score, expected_score)
-
-
+    
 class TestTiles(unittest.TestCase):
     def test_tile(self):
         tile = Tile('A', 1)
@@ -283,12 +282,14 @@ class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertTrue(dictionary.has_word('arbol'))
-
     
     def test_dictionary(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
+        self.assertTrue(dictionary.has_word('arbol'))
+        
+    def test_dictionary(self):
+        dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertTrue(dictionary.has_word('casa'))
-
 
     def test_word_false(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
@@ -297,6 +298,22 @@ class TestDictionary(unittest.TestCase):
     def test_word_false(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
+
+
+class TestWord(unittest.TestCase):
+    def setUp(self):
+        self.tablero = Board(15, 15)
+        self.jugador = Player()
+        self.bolsa = Tilebag()
+
+    def test_creacion_de_palabra(self):
+        palabra = Word("HOLA", (7, 7), self.jugador, "horizontal", self.tablero)
+        self.assertEqual(palabra.word, "HOLA")
+        self.assertEqual(palabra.location, (7, 7))
+        self.assertEqual(palabra.player, self.jugador)
+        self.assertEqual(palabra.direction, "horizontal")
+        self.assertEqual(palabra.board, self.tablero)
+
 
 if __name__ == '__main__':
     unittest.main()
