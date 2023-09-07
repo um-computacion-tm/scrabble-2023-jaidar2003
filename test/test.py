@@ -1,6 +1,7 @@
 import unittest
-from game.tiles import *
+from game.models import *
 from unittest.mock import patch
+
 
 class TestScrabble(unittest.TestCase):
     def test_scrabble(self):
@@ -61,6 +62,23 @@ class TestScrabble(unittest.TestCase):
 
         self.assertEqual(calculated_score, expected_score)
     
+    def test_start_game(self):
+        game = ScrabbleGame(2) 
+        game.start_game()
+        for player in game.players:
+            self.assertEqual(len(player.tiles), 7)
+        self.assertFalse(game.game_over)
+    
+    def test_end_game(self):
+        game = ScrabbleGame(2)
+        game.start_game()
+        game.end_game()
+        self.assertTrue(game.game_over)
+
+
+
+
+    
 class TestTiles(unittest.TestCase):
     def test_tile(self):
         tile = Tile('A', 1)
@@ -100,6 +118,10 @@ class TestTiles(unittest.TestCase):
     def test_get_tile(self):
         tile = Tile('A', 1)
         self.assertEqual(tile.letter, tile.get_letter())
+
+
+
+
 
 class TestBagTiles(unittest.TestCase):
     @patch('random.shuffle')
@@ -146,6 +168,10 @@ class TestBagTiles(unittest.TestCase):
         with self.assertRaises(DrawingMoreThanAvailable):
             bag.take(1000000000)
 
+
+
+
+
 class TestRack(unittest.TestCase):
     def test_rack_initialization(self):
         bag = Tilebag()
@@ -170,6 +196,9 @@ class TestRack(unittest.TestCase):
     def test_rack_replenish_rack(self):
         pass
  
+
+
+
 
 class TestBoardMethods(unittest.TestCase):
     def test_board_creation(self):
@@ -201,6 +230,9 @@ class TestBoardMethods(unittest.TestCase):
         tile = Tile("X", 8)
         result = board.place_tile(tile, 5, 5)
         self.assertFalse(result)
+
+
+
 
 
 class TestSquare(unittest.TestCase):
@@ -246,6 +278,8 @@ class TestSquare(unittest.TestCase):
 
 
 
+
+
 class TestPlayer(unittest.TestCase):
     def test_player(self):
         player = Player()
@@ -278,6 +312,9 @@ class TestPlayer(unittest.TestCase):
         self.assertFalse(tile == player.tiles[0])
 
 
+
+
+
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
@@ -298,6 +335,9 @@ class TestDictionary(unittest.TestCase):
     def test_word_false(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
+
+
+
 
 
 class TestWord(unittest.TestCase):

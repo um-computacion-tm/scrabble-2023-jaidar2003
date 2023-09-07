@@ -1,5 +1,7 @@
 Changelog:
 
+1th SPRINT
+
 0.0.1 - 2023-08-18
 ADDED:
 - Dictionary of letters and their respective amounts.
@@ -32,6 +34,8 @@ ADDED:
 ADDED:
 -Changes to classes such as Board, Tile, and TileBag; in addition to their respective tests
 
+2nd SPRINT
+
 0.0.7 - 2023-09-01
 ADDED:
 - Implementation of a Rack class
@@ -40,7 +44,13 @@ ADDED:
 ADDED:
 - Small changes on test
 
-0.0.9 - 2023-09-01
+0.0.9 - 2023-09-06
 ADDED:
 - Implementation of Word class
+
+0.1.0 - 2023-09-07
+ADDED:
+- Implementation of star_game and end_game functions at Scrabble Class
+
+
 
