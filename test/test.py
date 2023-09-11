@@ -2,7 +2,6 @@ import unittest
 from game.models import *
 from unittest.mock import patch
 
-
 class TestScrabble(unittest.TestCase):
     def test_scrabble(self):
         game = ScrabbleGame(1)
@@ -62,6 +61,54 @@ class TestScrabble(unittest.TestCase):
 
         self.assertEqual(calculated_score, expected_score)
     
+    def test_word_score_no_multipliers(self):
+        game = ScrabbleGame(1)
+        player = game.players[0]
+        bag = game.tilebag
+        board = game.board
+        dictionary = game.dictionary
+
+        word = ['A', 'R', 'B', 'O', 'L']
+        row, col = 7, 7 
+        for letter in word:
+            tile = Tile(letter, 1)
+            square = Square(letter=tile)
+            board.grid[row][col] = square
+            col += 1
+
+        expected_score = len(word) * 1  # Sin multiplicadores
+        calculated_score = game.word_score([board.grid[row][col] for col in range(7, 7 + len(word))])
+
+        self.assertEqual(calculated_score, expected_score)
+    
+    def test_start_game_rack_size(self):
+        game = ScrabbleGame(2) 
+        game.start_game()
+        for player in game.players:
+            self.assertEqual(len(player.tiles), 7)  # Cada jugador debe tener 7 fichas al inicio
+        self.assertFalse(game.game_over)
+
+    def test_start_game_initial_turn(self):
+        game = ScrabbleGame(2)
+        game.start_game()
+        self.assertEqual(game.current_player_index, 0)  # El turno inicial debe ser del primer jugador
+        self.assertFalse(game.game_over)
+    
+    def test_end_game_game_over(self):
+        game = ScrabbleGame(2)
+        game.start_game()
+        game.end_game()
+        self.assertTrue(game.game_over)  # El juego debe estar en estado "game over" después de finalizar
+
+    def test_end_game_score_order(self):
+        game = ScrabbleGame(2)
+        game.start_game()
+        game.players[0].increase_score(10)
+        game.players[1].increase_score(5)
+        game.end_game()
+        self.assertGreater(game.players[0].score, game.players[1].score)  # El jugador con más puntos debe estar en la primera posición
+
+
     def test_start_game(self):
         game = ScrabbleGame(2) 
         game.start_game()
@@ -74,11 +121,7 @@ class TestScrabble(unittest.TestCase):
         game.start_game()
         game.end_game()
         self.assertTrue(game.game_over)
-
-
-
-
-    
+ 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
         tile = Tile('A', 1)
@@ -118,10 +161,11 @@ class TestTiles(unittest.TestCase):
     def test_get_tile(self):
         tile = Tile('A', 1)
         self.assertEqual(tile.letter, tile.get_letter())
-
-
-
-
+    
+    def test_tile_value(self):
+        tile = Tile('Z', 10)  
+        self.assertEqual(tile.letter, 'Z')
+        self.assertEqual(tile.value, 10)
 
 class TestBagTiles(unittest.TestCase):
     @patch('random.shuffle')
@@ -167,10 +211,19 @@ class TestBagTiles(unittest.TestCase):
         bag = Tilebag()
         with self.assertRaises(DrawingMoreThanAvailable):
             bag.take(1000000000)
+        
+    def test_bag_tiles_shuffled(self):
+        bag = Tilebag()
+        tile_counts_before = [tile.get_value() for tile in bag.tiles]
+        bag_tiles_shuffled = Tilebag()  
+        tile_counts_after = [tile.get_value() for tile in bag_tiles_shuffled.tiles]
+        self.assertNotEqual(tile_counts_before, tile_counts_after)
 
-
-
-
+    def test_take_too_many(self):
+        bag = Tilebag()
+        initial_tile_count = len(bag.tiles)
+        with self.assertRaises(DrawingMoreThanAvailable):
+            bag.take(initial_tile_count + 1)
 
 class TestRack(unittest.TestCase):
     def test_rack_initialization(self):
@@ -196,10 +249,6 @@ class TestRack(unittest.TestCase):
     def test_rack_replenish_rack(self):
         pass
  
-
-
-
-
 class TestBoardMethods(unittest.TestCase):
     def test_board_creation(self):
         board = Board(10, 10)
@@ -230,10 +279,13 @@ class TestBoardMethods(unittest.TestCase):
         tile = Tile("X", 8)
         result = board.place_tile(tile, 5, 5)
         self.assertFalse(result)
-
-
-
-
+    
+    def test_board_place_tile_invalid_position(self):
+        board = Board(15, 15)
+        tile = Tile("X", 1)
+        result = board.place_tile(tile, 15, 15)
+        self.assertFalse(result)
+        self.assertNotEqual(board.grid[7][7], "X")
 
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
@@ -275,10 +327,18 @@ class TestSquare(unittest.TestCase):
         square = Square()
         square.insert_letter((Tile('A', 1)))
         self.assertEqual(square.letter.letter, 'A')
+    
+    def test_square_insert_letter_empty(self):
+        square = Square()
+        tile = Tile('A', 1)
+        square.insert_letter(tile)
+        self.assertEqual(square.letter, tile)  
 
-
-
-
+    def test_square_insert_letter_occupied(self):
+        square = Square(letter=Tile('A', 1))
+        tile = Tile('B', 1)
+        square.insert_letter(tile)
+        self.assertEqual(square.letter, Tile('A', 1))  
 
 class TestPlayer(unittest.TestCase):
     def test_player(self):
@@ -310,10 +370,16 @@ class TestPlayer(unittest.TestCase):
         tile = player.tiles[0]
         player.exchange_tile(player.tiles[0], bag)
         self.assertFalse(tile == player.tiles[0])
+    
+    def test_set_name(self):
+        player = Player()
+        player.set_name('Juanma')
+        self.assertEqual(player.get_name(), 'Juanma')
 
-
-
-
+    def test_get_score(self):
+        player = Player()
+        player.increase_score(2)
+        self.assertEqual(player.get_score(), 2)
 
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
@@ -335,10 +401,6 @@ class TestDictionary(unittest.TestCase):
     def test_word_false(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
-
-
-
-
 
 class TestWord(unittest.TestCase):
     def setUp(self):

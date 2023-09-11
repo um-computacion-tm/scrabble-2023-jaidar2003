@@ -160,7 +160,8 @@ class Board:
         if self.is_valid_position(row, col):
             self.grid[row][col] = tile.letter
             return True
-        return False
+        else:
+            return False  # Devolver False si la posición es inválida
 
 class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):
@@ -193,6 +194,7 @@ class Player:
     def __init__(self):
         self.score = 0
         self.tiles = []
+        self.name = ''
 
     def increase_score(self, points):
         self.score += points
@@ -208,7 +210,16 @@ class Player:
                 break
 
         self.tiles.extend(bag.take(1))
-
+    
+    def set_name(self, name):
+        self.name = name
+    
+    def get_score(self):
+        return self.score
+    
+    def get_name(self):
+        return self.name
+    
 
 class Dictionary:
     def __init__(self, file_path):

@@ -52,5 +52,11 @@ ADDED:
 ADDED:
 - Implementation of star_game and end_game functions at Scrabble Class
 
+0.1.1 - 2023-09-11
+ADDED:
+- Implementation of new functions at Player Class and also an increse of test coverage at Srabble Class
+
+
+
 
 
