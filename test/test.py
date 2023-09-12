@@ -287,6 +287,29 @@ class TestBoardMethods(unittest.TestCase):
         self.assertFalse(result)
         self.assertNotEqual(board.grid[7][7], "X")
 
+    def test_get_square_valid_position(self):
+        board = Board(15, 15)
+        tile = Tile('X', 1)
+        row, col = 7, 7
+        board.place_tile(tile, row, col)
+
+        square = board.get_square(row, col)
+        if isinstance(square, Square):
+            self.assertEqual(square.letter, tile)
+        else:
+            self.assertIsNone(square)  
+
+
+    def test_get_square_invalid_position(self):
+        board = Board(15, 15)
+        tile = Tile('X', 1)
+        row, col = 16, 16  
+        board.place_tile(tile, row, col)
+
+        square = board.get_square(row, col)
+        self.assertIsNone(square)
+
+
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
         square = Square()
@@ -338,7 +361,7 @@ class TestSquare(unittest.TestCase):
         square = Square(letter=Tile('A', 1))
         tile = Tile('B', 1)
         square.insert_letter(tile)
-        self.assertEqual(square.letter, Tile('A', 1))  
+        self.assertEqual(square.letter, Tile('A', 1)) 
 
 class TestPlayer(unittest.TestCase):
     def test_player(self):

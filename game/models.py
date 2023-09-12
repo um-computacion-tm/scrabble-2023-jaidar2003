@@ -147,7 +147,7 @@ class Board:
     def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.grid = [[' ' for _ in range(cols)] for _ in range(rows)]
+        self.grid = [[Square() for _ in range(self.cols)] for _ in range(self.rows)]
 
     def display(self):
         for row in self.grid:
@@ -161,7 +161,19 @@ class Board:
             self.grid[row][col] = tile.letter
             return True
         else:
-            return False  # Devolver False si la posición es inválida
+            return False
+    
+    def get_square(self, row, col):
+        if self.is_valid_position(row, col):
+            square = self.grid[row][col]
+            if isinstance(square, Square) and square.has_letter():
+                return square
+        return None  # Return None for empty squares, invalid positions, or non-Square objects
+
+    
+    def print_row(self):
+        pass
+
 
 class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):

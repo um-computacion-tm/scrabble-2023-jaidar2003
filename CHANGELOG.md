@@ -56,6 +56,10 @@ ADDED:
 ADDED:
 - Implementation of new functions at Player Class and also an increse of test coverage at Srabble Class
 
+0.1.1 - 2023-09-12
+ADDED:
+- Implementation of new functions at Board Class
+
 
 
 
