@@ -36,6 +36,7 @@ class ScrabbleGame:
         for rank, (player, score) in enumerate(final_scores, start=1):
             print(f"Posición {rank}: Jugador {rank} con puntaje {score}")
 
+                  
 
 class Tile:
     def __init__(self, letter, value):
@@ -251,6 +252,18 @@ class Word:
         self.player = player
         self.direction = direction.lower()
         self.board = board
+
+    def set_word(self, word):
+        self.word = word.upper()
+
+    def set_location(self, location):
+        self.location = location
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def get_word(self):
+        return self.word
 
 
 if __name__ == "__main__":

@@ -56,11 +56,10 @@ ADDED:
 ADDED:
 - Implementation of new functions at Player Class and also an increse of test coverage at Srabble Class
 
-0.1.1 - 2023-09-12
+0.1.2 - 2023-09-12
 ADDED:
 - Implementation of new functions at Board Class
 
-
-
-
-
+0.1.3 - 2023-09-13
+ADDED:
+- Implementation of new functions at Word Class, set_word, set_location, set_direction, get_word(self):

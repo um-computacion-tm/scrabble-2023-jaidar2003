@@ -85,13 +85,13 @@ class TestScrabble(unittest.TestCase):
         game = ScrabbleGame(2) 
         game.start_game()
         for player in game.players:
-            self.assertEqual(len(player.tiles), 7)  # Cada jugador debe tener 7 fichas al inicio
+            self.assertEqual(len(player.tiles), 7)  # Cada player debe tener 7 fichas al inicio
         self.assertFalse(game.game_over)
 
     def test_start_game_initial_turn(self):
         game = ScrabbleGame(2)
         game.start_game()
-        self.assertEqual(game.current_player_index, 0)  # El turno inicial debe ser del primer jugador
+        self.assertEqual(game.current_player_index, 0)  # El turno inicial debe ser del primer player
         self.assertFalse(game.game_over)
     
     def test_end_game_game_over(self):
@@ -106,7 +106,7 @@ class TestScrabble(unittest.TestCase):
         game.players[0].increase_score(10)
         game.players[1].increase_score(5)
         game.end_game()
-        self.assertGreater(game.players[0].score, game.players[1].score)  # El jugador con más puntos debe estar en la primera posición
+        self.assertGreater(game.players[0].score, game.players[1].score)  # El player con más puntos debe estar en la primera posición
 
 
     def test_start_game(self):
@@ -299,7 +299,6 @@ class TestBoardMethods(unittest.TestCase):
         else:
             self.assertIsNone(square)  
 
-
     def test_get_square_invalid_position(self):
         board = Board(15, 15)
         tile = Tile('X', 1)
@@ -427,17 +426,33 @@ class TestDictionary(unittest.TestCase):
 
 class TestWord(unittest.TestCase):
     def setUp(self):
-        self.tablero = Board(15, 15)
-        self.jugador = Player()
-        self.bolsa = Tilebag()
+        self.board = Board(15, 15)
+        self.player = Player()
+        self.tilebag = Tilebag()
 
-    def test_creacion_de_palabra(self):
-        palabra = Word("HOLA", (7, 7), self.jugador, "horizontal", self.tablero)
-        self.assertEqual(palabra.word, "HOLA")
-        self.assertEqual(palabra.location, (7, 7))
-        self.assertEqual(palabra.player, self.jugador)
-        self.assertEqual(palabra.direction, "horizontal")
-        self.assertEqual(palabra.board, self.tablero)
+    def test_creation_of_word(self):
+        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
+        self.assertEqual(word.word, "HOLA")
+        self.assertEqual(word.location, (7, 7))
+        self.assertEqual(word.player, self.player)
+        self.assertEqual(word.direction, "horizontal")
+        self.assertEqual(word.board, self.board)
+
+    def test_set_word(self):
+        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
+        word.word = "CASA"
+        self.assertEqual(word.word, "CASA")
+
+    def test_set_location(self):
+        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
+        word.location = (5, 5)
+        self.assertEqual(word.location, (5, 5))
+
+    def test_set_direction(self):
+        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
+        word.direction = "vertical"
+        self.assertEqual(word.direction, "vertical")
+
 
 
 if __name__ == '__main__':
