@@ -3,6 +3,7 @@ import random
 class ScrabbleGame:
     def __init__(self, amount):
         self.board = Board(rows=15, cols=15)
+        self.current_player_index = 0
         self.tilebag = Tilebag()
         self.players = []
         self.dictionary = Dictionary('dictionaries/dictionary.txt')
@@ -19,24 +20,12 @@ class ScrabbleGame:
             score += square.individual_score()
         return score * word_multipliers
     
-    def start_game(self):
-        for player in self.players:
-            player.draw_tiles(self.tilebag, 7)
-        self.current_player_index = 0  
-        self.game_over = False
-
-    def end_game(self):
-        self.game_over = True
-        final_scores = []
-        for player in self.players:
-            final_scores.append((player, player.score))
-
-        final_scores.sort(key=lambda x: x[1], reverse=True)
-
-        for rank, (player, score) in enumerate(final_scores, start=1):
-            print(f"Posición {rank}: Jugador {rank} con puntaje {score}")
-
-                  
+    def change_player_index(self):
+        if self.current_player_index == len(self.players) - 1:
+            self.current_player_index = 0
+        else:
+            self.current_player_index += 1
+    
 
 class Tile:
     def __init__(self, letter, value):

@@ -63,3 +63,10 @@ ADDED:
 0.1.3 - 2023-09-13
 ADDED:
 - Implementation of new functions at Word Class, set_word, set_location, set_direction, get_word(self):
+
+3th SPRINT
+
+0.1.3 - 2023-09-15
+ADDED:
+- Reimplementation of the Scrabble class, deleting of some functions; to be add to other class later
+

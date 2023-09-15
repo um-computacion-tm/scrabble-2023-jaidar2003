@@ -76,52 +76,20 @@ class TestScrabble(unittest.TestCase):
             board.grid[row][col] = square
             col += 1
 
-        expected_score = len(word) * 1  # Sin multiplicadores
+        expected_score = len(word) * 1  
         calculated_score = game.word_score([board.grid[row][col] for col in range(7, 7 + len(word))])
 
         self.assertEqual(calculated_score, expected_score)
+
+    def test_change_player_index(self):
+        game = ScrabbleGame(2)
+        self.assertEqual(game.current_player_index, 0)
+        game.change_player_index()
+        self.assertEqual(game.current_player_index, 1)
+        game.change_player_index()
+        self.assertEqual(game.current_player_index, 0)
     
-    def test_start_game_rack_size(self):
-        game = ScrabbleGame(2) 
-        game.start_game()
-        for player in game.players:
-            self.assertEqual(len(player.tiles), 7)  # Cada player debe tener 7 fichas al inicio
-        self.assertFalse(game.game_over)
 
-    def test_start_game_initial_turn(self):
-        game = ScrabbleGame(2)
-        game.start_game()
-        self.assertEqual(game.current_player_index, 0)  # El turno inicial debe ser del primer player
-        self.assertFalse(game.game_over)
-    
-    def test_end_game_game_over(self):
-        game = ScrabbleGame(2)
-        game.start_game()
-        game.end_game()
-        self.assertTrue(game.game_over)  # El juego debe estar en estado "game over" después de finalizar
-
-    def test_end_game_score_order(self):
-        game = ScrabbleGame(2)
-        game.start_game()
-        game.players[0].increase_score(10)
-        game.players[1].increase_score(5)
-        game.end_game()
-        self.assertGreater(game.players[0].score, game.players[1].score)  # El player con más puntos debe estar en la primera posición
-
-
-    def test_start_game(self):
-        game = ScrabbleGame(2) 
-        game.start_game()
-        for player in game.players:
-            self.assertEqual(len(player.tiles), 7)
-        self.assertFalse(game.game_over)
-    
-    def test_end_game(self):
-        game = ScrabbleGame(2)
-        game.start_game()
-        game.end_game()
-        self.assertTrue(game.game_over)
- 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
         tile = Tile('A', 1)
@@ -457,3 +425,5 @@ class TestWord(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
