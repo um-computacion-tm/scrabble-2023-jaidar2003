@@ -26,6 +26,12 @@ class ScrabbleGame:
         else:
             self.current_player_index += 1
     
+    def get_scores(self):
+        scores = {}
+        for player in self.players:
+            scores[player.get_name()] = player.get_score()
+        return scores
+    
 
 class Tile:
     def __init__(self, letter, value):

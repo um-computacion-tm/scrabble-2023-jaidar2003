@@ -88,6 +88,11 @@ class TestScrabble(unittest.TestCase):
         self.assertEqual(game.current_player_index, 1)
         game.change_player_index()
         self.assertEqual(game.current_player_index, 0)
+
+    def test_get_scores(self):
+        game = ScrabbleGame(1)
+        game.players[0].set_name("Juanma")
+        self.assertEqual(game.get_scores(), {'Juanma': 0})
     
 
 class TestTiles(unittest.TestCase):

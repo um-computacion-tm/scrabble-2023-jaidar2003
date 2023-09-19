@@ -66,7 +66,10 @@ ADDED:
 
 3th SPRINT
 
-0.1.3 - 2023-09-15
+0.1.4 - 2023-09-15
 ADDED:
 - Reimplementation of the Scrabble class, deleting of some functions; to be add to other class later
 
+0.1.35 - 2023-09-19
+ADDED:
+- Implementation of a new function at ScrabbleClass, get_score.
