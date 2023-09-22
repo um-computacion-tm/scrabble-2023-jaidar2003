@@ -70,6 +70,10 @@ ADDED:
 ADDED:
 - Reimplementation of the Scrabble class, deleting of some functions; to be add to other class later
 
-0.1.35 - 2023-09-19
+0.1.5 - 2023-09-19
 ADDED:
 - Implementation of a new function at ScrabbleClass, get_score.
+
+0.1.6 - 2023-09-21
+ADDED:
+- Implementation of the place_word and place horizontal and check_word_validity functions in the Scrabble class, in addition two more functions were added, called has_tile and put_tile in the Square class.

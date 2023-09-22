@@ -89,6 +89,23 @@ class TestScrabble(unittest.TestCase):
         game.change_player_index()
         self.assertEqual(game.current_player_index, 0)
 
+    def test_square_occupied(self):
+        game = ScrabbleGame(1)
+        tiles = [Tile('A', 1),
+                Tile('R', 1),
+                Tile('B', 1),
+                Tile('O', 1),
+                Tile('L', 1)]
+        
+        game.board.grid[7][8].insert_letter(Tile('R', 1))
+        game.place_word(tiles, 7, 7, 'horizontal')
+        self.assertEqual(game.board.grid[7][7].letter.get_letter(), 'A')
+        self.assertEqual(game.board.grid[7][8].letter.get_letter(), 'R')
+        self.assertEqual(game.board.grid[7][9].letter.get_letter(), 'B')
+        self.assertEqual(game.board.grid[7][10].letter.get_letter(), 'O')
+        self.assertEqual(game.board.grid[7][11].letter.get_letter(), 'L')
+
+
     def test_get_scores(self):
         game = ScrabbleGame(1)
         game.players[0].set_name("Juanma")
@@ -334,7 +351,7 @@ class TestSquare(unittest.TestCase):
         tile = Tile('B', 1)
         square.insert_letter(tile)
         self.assertEqual(square.letter, Tile('A', 1)) 
-
+    
 class TestPlayer(unittest.TestCase):
     def test_player(self):
         player = Player()
@@ -375,6 +392,40 @@ class TestPlayer(unittest.TestCase):
         player = Player()
         player.increase_score(2)
         self.assertEqual(player.get_score(), 2)
+
+    def test_check_word_validity_valid_word(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+        valid_word = [Tile('C', 1), Tile('A', 1), Tile('S', 1), Tile('A', 1)]
+        self.assertTrue(game.check_word_validity(valid_word))
+
+    def test_check_word_validity_invalid_word(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+        invalid_word = [Tile('W', 1), Tile('O', 1), Tile('R', 1), Tile('D', 1)]
+        self.assertFalse(game.check_word_validity(invalid_word))
+
+    def test_has_tile_empty_square(self):
+        square = Square()
+        self.assertFalse(square.has_tile())
+
+    def test_has_tile_occupied_square(self):
+        tile = Tile('A', 1)
+        square = Square(letter=tile)
+        self.assertTrue(square.has_tile())
+
+    def test_put_tile_empty_square(self):
+        square = Square()
+        tile = Tile('B', 2)
+        square.put_tile(tile)
+        self.assertEqual(square.letter, tile)
+
+    def test_put_tile_occupied_square(self):
+        tile1 = Tile('A', 1)
+        tile2 = Tile('B', 2)
+        square = Square(letter=tile1)
+        square.put_tile(tile2)
+        self.assertEqual(square.letter, tile1) 
 
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
@@ -430,5 +481,3 @@ class TestWord(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

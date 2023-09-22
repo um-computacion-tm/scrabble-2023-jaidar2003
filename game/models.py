@@ -1,4 +1,6 @@
 import random
+class WordNotValid(Exception):
+    pass
 
 class ScrabbleGame:
     def __init__(self, amount):
@@ -25,12 +27,46 @@ class ScrabbleGame:
             self.current_player_index = 0
         else:
             self.current_player_index += 1
-    
+
+    def place_word(self, word, starting_row, starting_column, direction):
+        self.last_word = []
+        if not self.check_word_validity(word):
+            raise WordNotValid
+        if direction.lower() == 'horizontal':
+            self.place_horizontal(word, starting_row, starting_column)
+        if direction.lower() == 'vertical':
+            self.place_vertical(word, starting_row, starting_column)
+
+
+    def place_horizontal(self, word, starting_row, starting_column):
+        current_row = starting_row
+        current_col = starting_column
+
+        for tile in word:
+            if current_col >= 15:
+                raise WordNotValid("La palabra no cabe en el tablero.")
+
+            square = self.board.grid[current_row][current_col]
+
+            if square.has_letter() and square.letter != tile:
+                raise WordNotValid("La palabra interfiere con otra en el tablero.")
+
+            square.insert_letter(tile)
+            current_col += 1
+
+        self.last_word = word
+
     def get_scores(self):
         scores = {}
         for player in self.players:
             scores[player.get_name()] = player.get_score()
         return scores
+    
+    def check_word_validity(self, word):
+        check = ""
+        for letter in word:
+            check += letter.get_letter()
+        return self.dictionary.has_word(check.lower())
     
 
 class Tile:
@@ -182,6 +218,9 @@ class Square:
 
     def has_multiplier(self):
         return self.multiplier > 1
+    
+    def has_tile(self):  
+        return self.has_letter()
 
     def insert_letter(self, letter):
         if not self.has_letter():
@@ -191,6 +230,11 @@ class Square:
         if self.word_multiplier > 1:
             self.word_multiplier -= 1
 
+    def put_tile(self, letter):
+        if not self.has_tile():
+            self.letter = letter
+        self.multiplier_is_up()
+    
     def individual_score(self):
         return self.letter.get_value() * self.multiplier
 
