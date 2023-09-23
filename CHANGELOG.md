@@ -77,3 +77,7 @@ ADDED:
 0.1.6 - 2023-09-21
 ADDED:
 - Implementation of the place_word and place horizontal and check_word_validity functions in the Scrabble class, in addition two more functions were added, called has_tile and put_tile in the Square class.
+
+0.1.7 - 2023-09-23
+ADDED:
+- Implementation of place vertical at Scrabble class.

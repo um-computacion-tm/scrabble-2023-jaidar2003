@@ -56,6 +56,25 @@ class ScrabbleGame:
 
         self.last_word = word
 
+    def place_vertical(self, word, starting_row, starting_column):
+        current_row = starting_row
+        current_col = starting_column
+
+        for tile in word:
+            if current_row >= 15:
+                raise WordNotValid("La palabra no cabe en el tablero.")
+
+            square = self.board.grid[current_row][current_col]
+
+            if square.has_letter() and square.letter != tile:
+                raise WordNotValid("La palabra interfiere con otra en el tablero.")
+
+            square.insert_letter(tile)
+            current_row += 1
+
+        self.last_word = word
+        return True
+
     def get_scores(self):
         scores = {}
         for player in self.players:
@@ -171,8 +190,6 @@ class Rack:
     def replenish_rack(self):
         while self.get_rack_length() < 7 and self.bag.get_remaining_tiles() > 0:
             self.add_to_rack()
-
-
 
 
 class Board:
@@ -308,4 +325,4 @@ class Word:
 if __name__ == "__main__":
     board = Board(15, 15)
     player = Player()
-    bag = Tilebag() 
+    bag = Tilebag()

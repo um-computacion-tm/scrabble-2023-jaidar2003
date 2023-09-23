@@ -3,6 +3,11 @@ from game.models import *
 from unittest.mock import patch
 
 class TestScrabble(unittest.TestCase):
+    def setUp(self):
+        self.game = ScrabbleGame(1)
+        self.tilebag = Tilebag()
+        self.board = self.game.board
+
     def test_scrabble(self):
         game = ScrabbleGame(1)
         self.assertIsNotNone(game.board)
@@ -105,6 +110,60 @@ class TestScrabble(unittest.TestCase):
         self.assertEqual(game.board.grid[7][10].letter.get_letter(), 'O')
         self.assertEqual(game.board.grid[7][11].letter.get_letter(), 'L')
 
+    def test_place_horizontal_valid_word(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+        palabra = [Tile('C', 3), Tile('A', 1), Tile('S', 1), Tile('A', 1)]
+        fila_inicio, columna_inicio = 7, 7
+        game.place_horizontal(palabra, fila_inicio, columna_inicio)
+
+        for col, tile in enumerate(palabra):
+            square = game.board.grid[fila_inicio][columna_inicio + col]
+            self.assertEqual(square.letter, tile)
+
+
+    def test_place_horizontal_word_does_not_fit(self):
+        palabra = [Tile('A', 1), Tile('B', 3), Tile('C', 1)]  
+        fila_inicio, columna_inicio = 7, 13 
+        with self.assertRaises(WordNotValid):
+            self.game.place_horizontal(palabra, fila_inicio, columna_inicio)
+
+    def test_place_horizontal_word_interferes_with_another(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+
+        gato = [Tile('G', 2), Tile('A', 1), Tile('T', 1), Tile('O', 1)]
+        fila_inicio, columna_inicio = 7, 7
+        game.place_horizontal(gato, fila_inicio, columna_inicio)
+
+        palabra = [Tile('P', 3), Tile('E', 1), Tile('R', 1), Tile('R', 1), Tile('O', 1)]
+        try:
+            game.place_horizontal(palabra, fila_inicio, columna_inicio + 2)
+            self.fail("The word should interfere with 'GATO'.")
+        except WordNotValid:
+            pass
+
+    def test_place_vertical_valid_word(self):
+        palabra = [Tile('P', 3), Tile('E', 1), Tile('R', 1), Tile('R', 1), Tile('O', 1)]
+        fila_inicio, columna_inicio = 7, 7
+        self.assertTrue(self.game.place_vertical(palabra, fila_inicio, columna_inicio))
+        for fila, tile in enumerate(palabra):
+            self.assertEqual(self.board.grid[fila_inicio + fila][columna_inicio].letter, tile)
+
+    def test_place_vertical_word_does_not_fit(self):
+        palabra = [Tile('A', 1), Tile('B', 3), Tile('C', 1)]  
+        fila_inicio, columna_inicio = 13, 7  
+        with self.assertRaises(WordNotValid):
+            self.game.place_vertical(palabra, fila_inicio, columna_inicio)
+
+    def test_place_vertical_word_interferes_with_another(self):
+        gato = [Tile('G', 2), Tile('A', 1), Tile('T', 1), Tile('O', 1)]
+        fila_inicio, columna_inicio = 7, 7
+        self.assertTrue(self.game.place_vertical(gato, fila_inicio, columna_inicio))
+
+        palabra = [Tile('P', 3), Tile('E', 1), Tile('R', 1), Tile('R', 1), Tile('O', 1)]  
+        with self.assertRaises(WordNotValid):
+            self.game.place_vertical(palabra, fila_inicio + 2, columna_inicio)
 
     def test_get_scores(self):
         game = ScrabbleGame(1)
