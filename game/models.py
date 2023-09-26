@@ -4,7 +4,7 @@ class WordNotValid(Exception):
 
 class ScrabbleGame:
     def __init__(self, amount):
-        self.board = Board(rows=15, cols=15)
+        self.board = Board(15, 15)
         self.current_player_index = 0
         self.tilebag = Tilebag()
         self.players = []
@@ -86,6 +86,36 @@ class ScrabbleGame:
         for letter in word:
             check += letter.get_letter()
         return self.dictionary.has_word(check.lower())
+
+    def check_first_turn(self):
+        return self.board.is_board_empty()
+
+    def check_left_square(self, row, col):
+        if col > 0:
+            return self.board.grid[row][col - 1].has_letter()
+        return False
+
+    def check_right_square(self, row, col):
+        if col < self.board.cols - 1:
+            return not self.board.grid[row][col + 1].has_letter()
+        return False
+
+    def check_up_square(self, row, col):
+        if row > 0:
+            return self.board.grid[row - 1][col].has_letter()
+        return False
+
+    def check_down_square(self, row, col):
+        if row < self.board.rows - 1:
+            return self.board.grid[row + 1][col].has_letter()
+        return False
+
+    def check_word_left(self, row, col):
+        while col > 0 and self.board.grid[row][col - 1].has_letter():
+            col -= 1
+        return col > 0 and self.board.grid[row][col].has_letter()
+
+
     
 
 class Tile:
@@ -193,10 +223,10 @@ class Rack:
 
 
 class Board:
-    def __init__(self, rows, cols):
+    def __init__(self, rows, columns):
         self.rows = rows
-        self.cols = cols
-        self.grid = [[Square() for _ in range(self.cols)] for _ in range(self.rows)]
+        self.cols = columns
+        self.grid = [[Square() for _ in range(columns)] for _ in range(rows)]
 
     def display(self):
         for row in self.grid:
@@ -219,7 +249,9 @@ class Board:
                 return square
         return None  # Return None for empty squares, invalid positions, or non-Square objects
 
-    
+    def is_board_empty(self):
+        return not self.grid[7][7].has_tile()
+        
     def print_row(self):
         pass
 
@@ -301,6 +333,7 @@ class Dictionary:
     def has_word(self, word):
         return word in self.words
 
+
 class Word:
     def __init__(self, word, location, player, direction, board):
         self.word = word.upper()
@@ -320,7 +353,6 @@ class Word:
 
     def get_word(self):
         return self.word
-
 
 if __name__ == "__main__":
     board = Board(15, 15)

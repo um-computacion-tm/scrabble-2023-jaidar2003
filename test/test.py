@@ -169,7 +169,62 @@ class TestScrabble(unittest.TestCase):
         game = ScrabbleGame(1)
         game.players[0].set_name("Juanma")
         self.assertEqual(game.get_scores(), {'Juanma': 0})
-    
+
+    def test_check_first_turn_empty_board(self):
+        game = ScrabbleGame(1)
+        self.assertTrue(game.check_first_turn())
+
+    def test_check_first_turn_non_empty_board(self):
+        game = ScrabbleGame(1)
+        game.board.grid[7][7].insert_letter(Tile('A', 1))
+        self.assertFalse(game.check_first_turn())
+
+    def test_check_left_square_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_left_square(7, 7))
+
+    def test_check_left_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[7][6].insert_letter(Tile('B', 1))
+        self.assertTrue(game.check_left_square(7, 7))
+
+    def test_check_right_square_empty(self):
+        game = ScrabbleGame(1)
+        game.board.cols = 15  # Set the 'cols' attribute for testing
+        self.assertFalse(game.check_right_square(7, 7))
+
+    def test_check_right_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.cols = 15  # Set the 'cols' attribute for testing
+        self.assertTrue(game.check_right_square(7, 7))
+
+    def test_check_right_square_empty(self):
+        game = ScrabbleGame(1)
+        self.assertTrue(game.check_right_square(7, 7))
+
+    def test_check_up_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[6][7].insert_letter(Tile('D', 1))
+        self.assertTrue(game.check_up_square(7, 7))
+
+    def test_check_down_square_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_down_square(7, 7))
+
+    def test_check_down_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[8][7].insert_letter(Tile('E', 1))
+        self.assertTrue(game.check_down_square(7, 7))
+
+    def test_check_word_left_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_word_left(7, 7))
+
+    def test_check_word_left_non_empty(self):
+        game = ScrabbleGame(1)
+        word = [Tile('F', 1), Tile('G', 2), Tile('H', 3)]
+        game.place_horizontal(word, 7, 4)
+        self.assertTrue(game.check_word_left(7, 7))
 
 class TestTiles(unittest.TestCase):
     def test_tile(self):

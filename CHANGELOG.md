@@ -80,4 +80,8 @@ ADDED:
 
 0.1.7 - 2023-09-23
 ADDED:
-- Implementation of place vertical at Scrabble class.
+- Implementation of place vertical function at Scrabble class.
+
+0.1.8 - 2023-09-26
+ADDED:
+- Implementation of check_first_turn, check_left_square, check_right_square, check_up_square, check_down_square, check_word_left at Scrabble Class, and also a fuction call is_board_empty at Board Class
