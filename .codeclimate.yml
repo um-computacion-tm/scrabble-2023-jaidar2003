@@ -1,0 +1,9 @@
+method-lines:
+    config:
+       threshold: 25
+argument-count:
+    config:
+       threshold: 3
+similar-code:
+    config:
+       threshold: 3
