@@ -85,3 +85,7 @@ ADDED:
 0.1.8 - 2023-09-26
 ADDED:
 - Implementation of check_first_turn, check_left_square, check_right_square, check_up_square, check_down_square, check_word_left at Scrabble Class, and also a fuction call is_board_empty at Board Class
+
+0.1.9 - 2023-09-27
+ADDED:
+- Implementation of ScrableCLI Class
