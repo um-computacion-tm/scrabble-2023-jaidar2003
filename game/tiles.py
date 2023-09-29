@@ -18,8 +18,8 @@ class ScrabbleGame:
                 square.multiplier_is_up()
             score += square.individual_score()
         return score * word_multipliers
-
     
+
 
 class Tile:
     def __init__(self, letter, value):
@@ -91,6 +91,40 @@ class Tilebag:
 
     def put(self, tiles):
         self.tiles.extend(tiles)
+    
+    def get_remaining_tiles(self):
+        return len(self.tiles)
+
+class Rack:
+    def __init__(self, bag):
+        self.rack = []
+        self.bag = bag
+        self.initialize()
+
+    def add_to_rack(self):
+        self.rack.append(self.bag.take(1)[0])  
+
+    def initialize(self):
+        for i in range(7):
+            self.add_to_rack()
+
+    def get_rack_str(self):
+        return ", ".join(str(item.get_letter()) for item in self.rack)
+
+    def get_rack_arr(self):
+        return self.rack
+
+    def remove_from_rack(self, tile):
+        self.rack.remove(tile)
+
+    def get_rack_length(self):
+        return len(self.rack)
+
+    def replenish_rack(self):
+        while self.get_rack_length() < 7 and self.bag.get_remaining_tiles() > 0:
+            self.add_to_rack()
+
+
 
 
 class Board:
@@ -171,9 +205,16 @@ class Dictionary:
     def has_word(self, word):
         return word in self.words
 
+class Word:
+    def __init__(self, word, location, player, direction, board):
+        self.word = word.upper()
+        self.location = location
+        self.player = player
+        self.direction = direction.lower()
+        self.board = board
 
 
 if __name__ == "__main__":
-    bag = Tilebag()
     board = Board(15, 15)
     player = Player()
+    bag = Tilebag() 
