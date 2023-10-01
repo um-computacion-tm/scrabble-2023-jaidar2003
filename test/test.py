@@ -512,7 +512,16 @@ class TestRack(unittest.TestCase):
         self.assertEqual(len(rack.rack), initial_rack_length - 1) 
 
     def test_rack_replenish_rack(self):
-        pass
+        tilebag = Tilebag()
+        tilebag.tiles = [Tile('A', 1)] * 20 
+
+        rack = Rack(tilebag)
+        rack.replenish_rack()
+
+        self.assertEqual(len(rack.rack), 7)
+
+        for tile in rack.rack:
+            self.assertIn(tile, tilebag.tiles)
 
     def test_check_up_square_occupied(self):
         game = ScrabbleGame(1)
