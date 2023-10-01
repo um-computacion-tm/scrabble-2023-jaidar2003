@@ -1,4 +1,5 @@
 import random
+
 class WordNotValid(Exception):
     pass
 
@@ -14,14 +15,14 @@ class ScrabbleGame:
 
     def word_score(self, word: list):
         score = 0
-        word_multipliers = 1  
+        word_multipliers = 1
         for square in word:
-            if square.word_multiplier is not None:
+            if hasattr(square, 'word_multiplier') and square.word_multiplier is not None:
                 word_multipliers *= square.word_multiplier
                 square.multiplier_is_up()
             score += square.individual_score()
         return score * word_multipliers
-    
+
     def change_player_index(self):
         if self.current_player_index == len(self.players) - 1:
             self.current_player_index = 0
@@ -118,7 +119,6 @@ class ScrabbleGame:
 
 PLAYERS = 2
 
-
 class ScrabbleCli:
     def __init__(self):
         self.game = ScrabbleGame(PLAYERS)
@@ -173,33 +173,52 @@ class ScrabbleCli:
                 break
             self.player_turn()
 
-    def end_game(self):
-        self.game_state = 'over'
-
-    def show_tiles(self):
-        tiles = self.game.players[self.game.current_player_index].show_tiles()
-        print(tiles)
+    def check_tiles(self):
+        if len(self.game.tilebag.tiles) <= 0:
+            self.end_game()
 
     def show_scores(self):
         scores = self.game.get_scores()
         for element in scores:
             print("Score for", element, ":", scores[element])
 
-    def check_tiles(self):
-        if len(self.game.tilebag.tiles) <= 0:
-            self.end_game()
-
     def game_state_start(self):
         self.game_state = 'ongoing'
 
-    def get_player_names(self):
-            for i in range(len(self.game.players)):
-                self.game.players[i].set_name(input(f"Player {i + 1} state your name: "))
+    def end_game(self):
+        self.game_state = 'over'
 
     def start_player_tiles(self):
         for player in self.game.players:
             player.draw_tiles(self.game.tilebag, 7)
 
+    def get_player_names(self):
+        for i in range(len(self.game.players)):
+            self.game.players[i].set_name(input(f"Player {i + 1} state your name: "))
+
+    def show_tiles(self):
+        tiles = self.game.players[self.game.current_player_index].show_tiles()
+        print(tiles)
+
+    def first_turn(self):
+        print("Since there is no word in the center, please place your word there to start the game")
+        word = input("Give a word to enter: ").lower()
+        row = int(input("State starting row: "))
+        column = int(input("State starting column: "))
+        direction = input("State direction (horizontal or vertical: )")
+        word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
+        if not self.valid_first_word(word, row, column, direction):
+            self.game.place_word(word, row, column, direction)
+            self.game.players[self.game.current_player_index].forfeit_tiles(word)
+            self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
+            self.game.change_player_index()
+
+    @staticmethod
+    def valid_first_word(word, starting_row, starting_column, direction):
+        mock_game = ScrabbleGame(1)
+        mock_game.place_word(word, starting_row, starting_column, direction)
+        return mock_game.board.is_board_empty()
+    
 class Tile:
     def __init__(self, letter, value):
         self.letter = letter
@@ -209,6 +228,9 @@ class Tile:
         if isinstance(other, Tile):
             return self.letter == other.letter and self.value == other.value
         return False
+
+    def individual_score(self):
+        return self.value
 
     def __repr__(self):
         return f"Tile(letter='{self.letter}', value={self.value})"
@@ -303,12 +325,11 @@ class Rack:
         while self.get_rack_length() < 7 and self.bag.get_remaining_tiles() > 0:
             self.add_to_rack()
 
-
 class Board:
     def __init__(self, rows, columns):
         self.rows = rows
         self.cols = columns
-        self.grid = [[Square() for _ in range(columns)] for _ in range(rows)]
+        self.grid = [[Square(word_multiplier=2) for _ in range(columns)] for _ in range(rows)]
 
     def display(self):
         for row in self.grid:
@@ -336,7 +357,6 @@ class Board:
         
     def print_row(self):
         pass
-
 
 class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):
@@ -393,7 +413,34 @@ class Player:
                 break
 
         self.tiles.extend(bag.take(1))
-    
+
+    def give_requested_tiles(self, word):
+        letters = []
+        for letter in word:
+            tile = self.find_letter_in_tiles(letter)
+            if tile is not None:
+                letters.append(tile)
+            else:
+                print(f"Letter '{letter}' not found in player's tiles")
+                return None
+        return letters
+
+    def find_letter_in_tiles(self, letter):
+        for tile in self.tiles:
+            if tile.get_letter() == letter.upper():
+                return tile
+        return None
+
+    def forfeit_tiles(self, word):
+        for tile in word:
+            self.forfeit_tile(tile)
+
+    def forfeit_tile(self, tile):
+        for i in range(len(self.tiles)):
+            if self.tiles[i].get_letter() == tile.get_letter():
+                self.tiles.pop(i)
+                break
+
     def set_name(self, name):
         self.name = name
     
@@ -405,8 +452,7 @@ class Player:
 
     def show_tiles(self):
         return self.tiles
-    
-    
+        
 class Dictionary:
     def __init__(self, file_path):
         self.words = self.load_words(file_path)
@@ -417,28 +463,3 @@ class Dictionary:
 
     def has_word(self, word):
         return word in self.words
-
-class Word:
-    def __init__(self, word, location, player, direction, board):
-        self.word = word.upper()
-        self.location = location
-        self.player = player
-        self.direction = direction.lower()
-        self.board = board
-
-    def set_word(self, word):
-        self.word = word.upper()
-
-    def set_location(self, location):
-        self.location = location
-
-    def set_direction(self, direction):
-        self.direction = direction
-
-    def get_word(self):
-        return self.word
-
-if __name__ == "__main__":
-    board = Board(15, 15)
-    player = Player()
-    bag = Tilebag()

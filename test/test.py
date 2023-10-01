@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
 from game.models import *
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 
 class TestScrabble(unittest.TestCase):
     def setUp(self):
@@ -264,11 +264,17 @@ class TestScrabble(unittest.TestCase):
         with self.assertRaises(WordNotValid):
             game.place_vertical(word, row, col)
 
+
 class TestScrabbleCLI(unittest.TestCase):
     def test_game_over(self):
         scrabblecli = ScrabbleCli()  
         scrabblecli.game_state = "over" 
         self.assertEqual(scrabblecli.game_state, "over")
+
+    def test_game_state_start(self):
+        scrabblecli = ScrabbleCli()
+        scrabblecli.game_state_start()
+        self.assertEqual(scrabblecli.game_state, "ongoing")
 
     @patch('builtins.input', side_effect=['pass'])
     def test_player_turn_pass(self, mock_input):
@@ -285,6 +291,19 @@ class TestScrabbleCLI(unittest.TestCase):
         scrabblecli.game.players[0].set_name("Juanma")
         scrabblecli.show_scores()
         self.assertEqual(mock_stdout.getvalue().strip(), "Score for Juanma : 0")
+
+    @patch('sys.stdout', new_callable=StringIO)
+    @patch('builtins.input', side_effect=['Juanma', 'scores', 'quit'])
+    def test_start_game(self, mock_input, mock_stdout):
+        scrabblecli = ScrabbleCli()
+        square = Square()
+        square.put_tile(Tile('A', 1))
+        scrabblecli.game.board.grid[7][7] = square
+        scrabblecli.game.players.pop(1)
+        scrabblecli.game.players[0].set_name("Juanma")
+        scrabblecli.start_game()
+        self.assertEqual(mock_stdout.getvalue().strip(), 'Score for Juanma : 0')
+        self.assertEqual(scrabblecli.game_state, "over")
 
     @patch('sys.stdout', new_callable=StringIO)
     @patch('builtins.input', side_effect=['Juanma', 'tiles', 'quit'])
@@ -316,6 +335,41 @@ class TestScrabbleCLI(unittest.TestCase):
         game = ScrabbleGame(1)
         game.board.grid[7][6].insert_letter(Tile('B', 1))
         self.assertTrue(game.check_left_square(7, 7))
+
+    @patch('builtins.input', side_effect=['play', 'hola', '7', '7', 'horizontal'])
+    def test_turn_word(self, mock_input):
+        scrabblecli = ScrabbleCli()
+        scrabblecli.game.players[scrabblecli.game.current_player_index].tiles = \
+            [Tile('H', 1),
+             Tile('O', 1),
+             Tile('L', 1),
+             Tile('A', 1)]
+        scrabblecli.player_turn()
+        self.assertEqual(scrabblecli.game.board.grid[7][7].letter, Tile('H', 1))
+        self.assertEqual(scrabblecli.game.board.grid[7][8].letter, Tile('O', 1))
+        self.assertEqual(scrabblecli.game.board.grid[7][9].letter, Tile('L', 1))
+        self.assertEqual(scrabblecli.game.board.grid[7][10].letter, Tile('A', 1))
+        self.assertEqual(scrabblecli.game.players[scrabblecli.game.current_player_index - 1].score, 4)
+
+    @patch('builtins.input', side_effect=['pass'])
+    def test_last_player_turn(self, mock_input):
+        scrabblecli = ScrabbleCli()
+        scrabblecli.game.current_player_index = 1
+        scrabblecli.player_turn()
+        self.assertEqual(scrabblecli.game.current_player_index, 0)
+
+    @patch('sys.stdout', new_callable=StringIO)
+    @patch('builtins.input', side_effect=['hola', '0', '7', 'horizontal'])
+    def test_first_turn_wrong(self, mock_input, mock_stdout):
+        scrabblecli = ScrabbleCli()
+        scrabblecli.game.players.pop(1)
+        scrabblecli.game.players[scrabblecli.game.current_player_index].tiles = \
+            [Tile('H', 1),
+             Tile('O', 1),
+             Tile('L', 1),
+             Tile('A', 1)]
+        scrabblecli.first_turn()
+        self.assertFalse(scrabblecli.game.board.grid[0][7].has_tile())
 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
@@ -678,37 +732,6 @@ class TestDictionary(unittest.TestCase):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
 
-class TestWord(unittest.TestCase):
-    def setUp(self):
-        self.board = Board(15, 15)
-        self.player = Player()
-        self.tilebag = Tilebag()
-
-    def test_creation_of_word(self):
-        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
-        self.assertEqual(word.word, "HOLA")
-        self.assertEqual(word.location, (7, 7))
-        self.assertEqual(word.player, self.player)
-        self.assertEqual(word.direction, "horizontal")
-        self.assertEqual(word.board, self.board)
-
-    def test_set_word(self):
-        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
-        word.word = "CASA"
-        self.assertEqual(word.word, "CASA")
-
-    def test_set_location(self):
-        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
-        word.location = (5, 5)
-        self.assertEqual(word.location, (5, 5))
-
-    def test_set_direction(self):
-        word = Word("HOLA", (7, 7), self.player, "horizontal", self.board)
-        word.direction = "vertical"
-        self.assertEqual(word.direction, "vertical")
-
 if __name__ == '__main__':
     unittest.main()
-
-
-
+ 
