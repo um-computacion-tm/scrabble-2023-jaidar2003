@@ -1,4 +1,9 @@
 Changelog: Juan Manuel Aidar
+4th SPRINT
+
+0.2.1 - 2023-09-30
+ADDED:
+- Implementation of some fucntions call get_player, show_tiles, first_turn and cakid+first_word at ScrabbleCLI and some others like give_requesr_tiles, find_letter_in_tiles, forfeit_tiles and forfeit_tile at Player
 
 3th SPRINT
 
