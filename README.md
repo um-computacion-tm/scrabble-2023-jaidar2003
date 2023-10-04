@@ -15,12 +15,16 @@ letter tiles, scoring and word validity checking.
 | Status |[![Test Coverage](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/test_coverage)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/test_coverage) | [![Maintainability](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/maintainability)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/maintainability)
 
 # Download
-git@github.com:um-computacion-tm/scrabble-2023-jaidar2003.git
-
+```bash
+git clone https://github.com/um-computacion-tm/scrabble-2023-jaidar2003
+```
 
 # Student Data
+
+Computacion I
 
 Designed, written and produced by Juan Manuel Aidar himself.
 
 "62005"
 
+Year: 2023
