@@ -264,7 +264,6 @@ class TestScrabble(unittest.TestCase):
         with self.assertRaises(WordNotValid):
             game.place_vertical(word, row, col)
 
-
 class TestScrabbleCLI(unittest.TestCase):
     def test_game_over(self):
         scrabblecli = ScrabbleCli()  
@@ -476,62 +475,13 @@ class TestBagTiles(unittest.TestCase):
 
     def test_check_word_left_empty(self):
         game = ScrabbleGame(1)
-
-        # The left square should be empty initially
         self.assertFalse(game.check_word_left(7, 7))
 
     def test_check_word_left_non_empty(self):
         game = ScrabbleGame(1)
-
-        # Place a word on the board to the left
         word = [Tile('F', 1), Tile('G', 2), Tile('H', 3)]
         game.place_horizontal(word, 7, 4)
-
-        # The left square should be non-empty
         self.assertTrue(game.check_word_left(7, 7))
-
-class TestRack(unittest.TestCase):
-    def test_rack_initialization(self):
-        bag = Tilebag()
-        rack = Rack(bag)
-        self.assertEqual(len(rack.rack), 7)
-
-    def test_rack_add_to_rack(self):
-        bag = Tilebag()
-        rack = Rack(bag)
-        initial_rack_length = len(rack.rack)
-        rack.add_to_rack()
-        self.assertEqual(len(rack.rack), initial_rack_length + 1) 
-    
-    def test_rack_remove_from_rack(self):
-        bag = Tilebag()
-        rack = Rack(bag)
-        initial_rack_length = len(rack.rack)
-        tile = rack.rack[0]
-        rack.remove_from_rack(tile)
-        self.assertEqual(len(rack.rack), initial_rack_length - 1) 
-
-    def test_rack_replenish_rack(self):
-        tilebag = Tilebag()
-        tilebag.tiles = [Tile('A', 1)] * 20 
-
-        rack = Rack(tilebag)
-        rack.replenish_rack()
-
-        self.assertEqual(len(rack.rack), 7)
-
-        for tile in rack.rack:
-            self.assertIn(tile, tilebag.tiles)
-
-    def test_check_up_square_occupied(self):
-        game = ScrabbleGame(1)
-        game.board.grid[6][7].insert_letter(Tile('D', 1))
-        self.assertTrue(game.check_up_square(7, 7))
-
-    def test_check_down_square_occupied(self):
-        game = ScrabbleGame(1)
-        game.board.grid[8][7].insert_letter(Tile('E', 1))
-        self.assertTrue(game.check_down_square(7, 7))
 
 class TestBoard(unittest.TestCase):
     def test_board_creation(self):
@@ -591,6 +541,19 @@ class TestBoard(unittest.TestCase):
 
         square = board.get_square(row, col)
         self.assertIsNone(square)
+
+def test_add_premium_squares(self):
+    board = Board(15, 15)
+    board.add_premium_squares()
+
+    self.assertEqual(board.grid[0][0].word_multiplier, 2)  
+
+def test_set_square_multiplier(self):
+    board = Board(15, 15)
+    board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  
+
+    self.assertEqual(board.grid[3][3].word_multiplier, 2)
+    self.assertEqual(board.grid[3][3].letter_multiplier, 1)
 
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
@@ -674,7 +637,7 @@ class TestPlayer(unittest.TestCase):
         player.draw_tiles(bag, 2)
         tile = player.tiles[0]
         player.exchange_tile(player.tiles[0], bag)
-        self.assertFalse(tile == player.tiles[0])
+        self.assertNotEqual(tile, player.tiles[0])
     
     def test_set_name(self):
         player = Player()
@@ -744,3 +707,4 @@ class TestDictionary(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
  
+

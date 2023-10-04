@@ -1,19 +1,26 @@
 # Scrabble
 
-Das Ziel dieser Entwicklungsinitiative besteht darin, ein Scrabble-Spiel unter Verwendung der Programmiersprache Python zu erstellen und dabei die im Wikipedia-Eintrag über das Spiel dargelegten Vorschriften und Prinzipien einzuhalten. 
-Das daraus resultierende Spiel wird es Benutzern ermöglichen, über eine textbasierte Schnittstelle an Scrabble-Matches teilzunehmen und Funktionen für das Spielbrett, 
-Buchstabenplättchen, Wertung und die Überprüfung der Wortgültigkeit zu bieten.
+The aim of this development initiative is to create a Scrabble game using the Python programming language, following the rules and principles outlined in the Wikipedia entry on the game. 
+The resulting game will allow users to participate in Scrabble matches via a text-based interface and will include functions for the game board, 
+letter tiles, scoring and word validity checking.
 
-# CircleCI-ABZEICHEN
+## Current Status
 
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/um-computacion-tm/scrabble-2023-jaidar2003/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/um-computacion-tm/scrabble-2023-jaidar2003/tree/main)
+| *_CircleCI_* | *_Main branch_* |
+| :---:   | :---:   |
+| Status |[![CircleCI](https://dl.circleci.com/status-badge/img/gh/um-computacion-tm/scrabble-2023-jaidar2003/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/um-computacion-tm/scrabble-2023-jaidar2003/tree/main)
 
-# CodeClimate-ABZEICHEN
+| _*Codeclimate*_ | *_Coverage_* | *_Maintainability_* |
+| :---:   | :---:   | :---: |
+| Status |[![Test Coverage](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/test_coverage)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/test_coverage) | [![Maintainability](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/maintainability)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/maintainability)
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/maintainability)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/maintainability)
+# Download
+git@github.com:um-computacion-tm/scrabble-2023-jaidar2003.git
 
-[![Test Coverage](https://api.codeclimate.com/v1/badges/73676511189bdd7736c5/test_coverage)](https://codeclimate.com/github/um-computacion-tm/scrabble-2023-jaidar2003/test_coverage)
 
-# Entworfen, geschrieben und produziert von Juan Manuel Aidar selbst.
+# Student Data
 
-# Meine Hochschulkennnummer "62005".
+Designed, written and produced by Juan Manuel Aidar himself.
+
+"62005"
+

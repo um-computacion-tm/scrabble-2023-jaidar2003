@@ -1,6 +1,10 @@
 Changelog: Juan Manuel Aidar
 4th SPRINT
 
+0.2.3 - 2023-10-03
+ADDED:
+- Implementation of some fuctions and i took out rack and word classes 
+
 0.2.2 - 2023-10-01
 ADDED:
 - Implementation of a test which wasnt complete before (test_rack_replenish_rack) at Rack Class

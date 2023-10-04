@@ -296,36 +296,21 @@ class Tilebag:
     def get_remaining_tiles(self):
         return len(self.tiles)
 
-class Rack:
-    def __init__(self, bag):
-        self.rack = []
-        self.bag = bag
-        self.initialize()
-
-    def add_to_rack(self):
-        self.rack.append(self.bag.take(1)[0])  
-
-    def initialize(self):
-        for i in range(7):
-            self.add_to_rack()
-
-    def get_rack_str(self):
-        return ", ".join(str(item.get_letter()) for item in self.rack)
-
-    def get_rack_arr(self):
-        return self.rack
-
-    def remove_from_rack(self, tile):
-        self.rack.remove(tile)
-
-    def get_rack_length(self):
-        return len(self.rack)
-
-    def replenish_rack(self):
-        while self.get_rack_length() < 7 and self.bag.get_remaining_tiles() > 0:
-            self.add_to_rack()
-
 class Board:
+
+    COLS = 15
+    ROWS = 15
+
+    TRIPLE_WORD_SCORE = ((0, 0), (7, 0), (14, 0), (0, 7), (14, 7), (0, 14), (7, 14), (14, 14))
+    DOUBLE_WORD_SCORE = ((1, 1), (2, 2), (3, 3), (4, 4), (1, 13), (2, 12), (3, 11), (4, 10), (13, 1), (12, 2), (11, 3),
+                        (10, 4), (13, 13), (12, 12), (11, 11), (10, 10))
+
+    TRIPLE_LETTER_SCORE = ((1, 5), (1, 9), (5, 1), (5, 5), (5, 9), (5, 13), (9, 1), (9, 5), (9, 9), (9, 13), (13, 5),
+                        (13, 9))
+    DOUBLE_LETTER_SCORE = ((0, 3), (0, 11), (2, 6), (2, 8), (3, 0), (3, 7), (3, 14), (6, 2), (6, 6), (6, 8), (6, 12),
+                        (7, 3), (7, 11), (8, 2), (8, 6), (8, 8), (8, 12), (11, 0), (11, 7), (11, 14), (12, 6), (12, 8),
+                        (14, 3), (14, 11))
+
     def __init__(self, rows, columns):
         self.rows = rows
         self.cols = columns
@@ -350,20 +335,47 @@ class Board:
             square = self.grid[row][col]
             if isinstance(square, Square) and square.has_letter():
                 return square
-        return None  # Return None for empty squares, invalid positions, or non-Square objects
+        return None
 
+    def get_tile(self, row, col):
+        if self.is_valid_position(row, col):
+            square = self.grid[row][col]
+            if isinstance(square, Square) and square.has_letter():
+                return square.get_letter()
+        return None
+    
     def is_board_empty(self):
         return not self.grid[7][7].has_tile()
-        
-    def print_row(self):
-        pass
+    
+    def add_premium_squares(self):
+        for row, col in self.TRIPLE_WORD_SCORE:
+            self.grid[row][col].set_word_multiplier(3)
+
+        for row, col in self.DOUBLE_WORD_SCORE:
+            self.grid[row][col].set_word_multiplier(2)
+
+        for row, col in self.TRIPLE_LETTER_SCORE:
+            self.grid[row][col].set_letter_multiplier(3)
+
+        for row, col in self.DOUBLE_LETTER_SCORE:
+            self.grid[row][col].set_letter_multiplier(2)
+
+    def set_square_multiplier(self, row, col, word_multiplier=None, letter_multiplier=None):
+        if self.is_valid_position(row, col):
+            square = self.grid[row][col]
+            if word_multiplier is not None:
+                square.set_word_multiplier(word_multiplier)
+            if letter_multiplier is not None:
+                square.set_letter_multiplier(letter_multiplier)      
+
 
 class Square:
-    def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1):
+    def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1, letter_multiplier: int =1):
         self.multiplier = multiplier
         self.letter = letter
         self.word_multiplier = word_multiplier 
-
+        self.letter_multiplier = letter_multiplier
+    
     def has_letter(self):
         return self.letter is not None
 
@@ -385,14 +397,19 @@ class Square:
         if not self.has_tile():
             self.letter = letter
         self.multiplier_is_up()
-    
+ 
     def individual_score(self):
         return self.letter.get_value() * self.multiplier
 
     def __repr__(self):
         return f"Square(multiplier={self.multiplier}, letter={self.letter}, word_multiplier={self.word_multiplier})"
 
+    def set_word_multiplier(self, amount):
+        self.multiplier = amount
 
+    def set_letter_multiplier(self, amount):
+        self.multiplier = amount
+        
 class Player:
     def __init__(self):
         self.score = 0
@@ -463,3 +480,6 @@ class Dictionary:
 
     def has_word(self, word):
         return word in self.words
+
+
+
