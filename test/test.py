@@ -542,18 +542,18 @@ class TestBoard(unittest.TestCase):
         square = board.get_square(row, col)
         self.assertIsNone(square)
 
-def test_add_premium_squares(self):
-    board = Board(15, 15)
-    board.add_premium_squares()
+    def test_add_premium_squares(self):
+        board = Board(15, 15)
+        board.add_premium_squares()
 
-    self.assertEqual(board.grid[0][0].word_multiplier, 2)  
+        self.assertEqual(board.grid[0][0].word_multiplier, 2)  
 
-def test_set_square_multiplier(self):
-    board = Board(15, 15)
-    board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  
+    def test_set_square_multiplier(self):
+        board = Board(15, 15)
+        board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  
 
-    self.assertEqual(board.grid[3][3].word_multiplier, 2)
-    self.assertEqual(board.grid[3][3].letter_multiplier, 1)
+        self.assertEqual(board.grid[3][3].word_multiplier, 2)
+        self.assertEqual(board.grid[3][3].letter_multiplier, 1)
 
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
