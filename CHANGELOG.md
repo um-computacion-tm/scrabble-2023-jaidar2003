@@ -1,6 +1,14 @@
 Changelog: Juan Manuel Aidar
 4th SPRINT
 
+0.2.5 - 2023-10-10
+ADDED: 
+- Implementation of a new fuctions at board class (i will have to improve it)
+
+0.2.4 - 2023-10-05
+ADDED: 
+- I tab 2 fuctions which i forgot to tab before
+
 0.2.3 - 2023-10-03
 ADDED:
 - Implementation of some fuctions and i took out rack and word classes 

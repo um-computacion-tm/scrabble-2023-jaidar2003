@@ -13,6 +13,12 @@ class ScrabbleGame:
         for i in range(amount):
             self.players.append(Player())
 
+    def calculate_word_score(self, word):
+        score = 0
+        for tile in word:
+            score += tile.individual_score()
+        return score
+
     def word_score(self, word: list):
         score = 0
         word_multipliers = 1
@@ -38,19 +44,18 @@ class ScrabbleGame:
         if direction.lower() == 'vertical':
             self.place_vertical(word, starting_row, starting_column)
 
-
     def place_horizontal(self, word, starting_row, starting_column):
         current_row = starting_row
         current_col = starting_column
 
         for tile in word:
             if current_col >= 15:
-                raise WordNotValid("La palabra no cabe en el tablero.")
+                raise WordNotValid("The word does not fit on the board.")
 
             square = self.board.grid[current_row][current_col]
 
             if square.has_letter() and square.letter != tile:
-                raise WordNotValid("La palabra interfiere con otra en el tablero.")
+                raise WordNotValid("The word interferes with another word on the board.")
 
             square.insert_letter(tile)
             current_col += 1
@@ -63,12 +68,12 @@ class ScrabbleGame:
 
         for tile in word:
             if current_row >= 15:
-                raise WordNotValid("La palabra no cabe en el tablero.")
+                raise WordNotValid("The word does not fit on the board.")
 
             square = self.board.grid[current_row][current_col]
 
             if square.has_letter() and square.letter != tile:
-                raise WordNotValid("La palabra interfiere con otra en el tablero.")
+                raise WordNotValid("The word interferes with another word on the board.")
 
             square.insert_letter(tile)
             current_row += 1
@@ -101,7 +106,6 @@ class ScrabbleGame:
             return not self.board.grid[row][col + 1].has_letter()
         return False
 
-
     def check_up_square(self, row, col):
         if row > 0:
             return self.board.grid[row - 1][col].has_letter()
@@ -132,6 +136,15 @@ class ScrabbleCli:
             'tiles': self.show_tiles,
         }
 
+    def start_game(self):
+        self.game_state_start()
+        self.get_player_names()
+        self.start_player_tiles()
+        self.game.board.add_premium_squares()
+        while not self.game_state == 'over':
+            self.player_turn()
+
+
     def player_turn(self):
         action = input("What would you like to do? (play, pass, draw, scores, quit, tiles) ").lower()
         chosen_action = self.VALID_ACTIONS.get(action)
@@ -152,6 +165,21 @@ class ScrabbleCli:
         self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
         self.game.change_player_index()
 
+        self.game.board.print_board()
+
+    def first_turn(self):
+        print("Since there is no word in the center, please place your word there to start the game")
+        word = input("Give a word to enter: ").lower()
+        row = int(input("State starting row: "))
+        column = int(input("State starting column: "))
+        direction = input("State direction (horizontal or vertical: )")
+        word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
+        if not self.valid_first_word(word, row, column, direction):
+            self.game.place_word(word, row, column, direction)
+            self.game.players[self.game.current_player_index].forfeit_tiles(word)
+            self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
+            self.game.change_player_index()
+
     def pass_turn(self):
         self.game.change_player_index()
 
@@ -159,19 +187,6 @@ class ScrabbleCli:
         amount = int(input("How many tiles do you want to draw? "))
         self.game.players[self.game.current_player_index].draw_tiles(self.game.tilebag, amount)
         self.game.change_player_index()
-
-    def start_game(self):
-        self.game_state_start()
-        self.get_player_names()
-        self.start_player_tiles()
-        while True:
-            if self.game.check_first_turn():
-                self.first_turn()
-                continue
-            self.check_tiles()
-            if self.game_state == 'over':
-                break
-            self.player_turn()
 
     def check_tiles(self):
         if len(self.game.tilebag.tiles) <= 0:
@@ -200,18 +215,8 @@ class ScrabbleCli:
         tiles = self.game.players[self.game.current_player_index].show_tiles()
         print(tiles)
 
-    def first_turn(self):
-        print("Since there is no word in the center, please place your word there to start the game")
-        word = input("Give a word to enter: ").lower()
-        row = int(input("State starting row: "))
-        column = int(input("State starting column: "))
-        direction = input("State direction (horizontal or vertical: )")
-        word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
-        if not self.valid_first_word(word, row, column, direction):
-            self.game.place_word(word, row, column, direction)
-            self.game.players[self.game.current_player_index].forfeit_tiles(word)
-            self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
-            self.game.change_player_index()
+    def check_game_over(self):
+        return len(self.game.tilebag.tiles) == 0 and all(player.passed_turn for player in self.game.players)
 
     @staticmethod
     def valid_first_word(word, starting_row, starting_column, direction):
@@ -324,11 +329,13 @@ class Board:
         return 0 <= row < self.rows and 0 <= col < self.cols
 
     def place_tile(self, tile, row, col):
-        if self.is_valid_position(row, col):
-            self.grid[row][col] = tile.letter
-            return True
-        else:
-            return False
+        if not (0 <= row < self.rows) or not (0 <= col < self.cols):
+            return False  # Posición no válida
+        square = self.grid[row][col]
+        if square.has_tile():
+            return False  # La casilla ya está ocupada
+        square.insert_letter(tile)
+        return True
     
     def get_square(self, row, col):
         if self.is_valid_position(row, col):
@@ -367,6 +374,23 @@ class Board:
                 square.set_word_multiplier(word_multiplier)
             if letter_multiplier is not None:
                 square.set_letter_multiplier(letter_multiplier)      
+
+
+    def print_board(self):
+        header = "   " + "  ".join([f"{i:02d}" for i in range(1, self.cols + 1)])
+        print(header)
+        print("  +" + "---+" * self.cols)
+
+        for row_index, row in enumerate(self.grid):
+            row_str = f"{row_index+1:02d} | "
+            for square in row:
+                if isinstance(square, Square) and square.has_letter():
+                    row_str += f"{square.letter.get_letter()} | "
+                else:
+                    row_str += "  | "
+            print(row_str)
+            print("  +" + "---+" * self.cols)
+
 
 
 class Square:
@@ -480,6 +504,4 @@ class Dictionary:
 
     def has_word(self, word):
         return word in self.words
-
-
-
+    

@@ -30,13 +30,11 @@ class TestScrabble(unittest.TestCase):
         self.assertEqual(board.get_tile(7, 7), Tile('A', 1))
         self.assertEqual(board.grid[7][7].get_multiplier(), 2)
 
-    @patch('random.shuffle')
-    def test_board_place_tile(self, patch_shuffle):
+    def test_board_place_tile(self):
         board = Board(15, 15)
         tile = Tile('X', 1)
         self.assertTrue(board.place_tile(tile, 7, 7))
-        self.assertEqual(board.grid[7][7], 'X')
-        self.assertFalse(patch_shuffle.called)
+        self.assertEqual(board.get_square(7, 7).letter, tile)
 
     def test_square_insert_letter(self):
         square = Square()
@@ -492,8 +490,8 @@ class TestBoard(unittest.TestCase):
     def test_place_tile(self):
         board = Board(5, 5)
         tile = Tile("X", 8)
-        board.place_tile(tile, 2, 2)
-        self.assertEqual(board.grid[2][2], "X") 
+        self.assertTrue(board.place_tile(tile, 2, 2))
+        self.assertEqual(board.grid[2][2].letter, tile)
 
     def test_place_tile_invalid_position(self):
         board = Board(5, 5)
@@ -528,10 +526,11 @@ class TestBoard(unittest.TestCase):
         board.place_tile(tile, row, col)
 
         square = board.get_square(row, col)
-        if isinstance(square, Square):
-            self.assertEqual(square.letter, tile)
+        if square.letter is not None:
+            self.assertEqual(square.letter.get_letter(), 'X')
         else:
-            self.assertIsNone(square)  
+            self.fail("The square should have a letter.")
+
 
     def test_get_square_invalid_position(self):
         board = Board(15, 15)
@@ -546,14 +545,17 @@ class TestBoard(unittest.TestCase):
         board = Board(15, 15)
         board.add_premium_squares()
 
-        self.assertEqual(board.grid[0][0].word_multiplier, 2)  
+        self.assertEqual(board.grid[0][0].word_multiplier, 2)  # Cambia el valor de 3 a 2
 
     def test_set_square_multiplier(self):
         board = Board(15, 15)
-        board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  
+        board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  # Cambia el valor de 3 a 1
 
         self.assertEqual(board.grid[3][3].word_multiplier, 2)
         self.assertEqual(board.grid[3][3].letter_multiplier, 1)
+
+    def test_board_print(self):
+        pass
 
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
@@ -707,4 +709,3 @@ class TestDictionary(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
  
-
