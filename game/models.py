@@ -377,6 +377,7 @@ class Board:
 
 
     def print_board(self):
+        print('\n')
         header = "   " + "  ".join([f"{i:02d}" for i in range(1, self.cols + 1)])
         print(header)
         print("  +" + "---+" * self.cols)

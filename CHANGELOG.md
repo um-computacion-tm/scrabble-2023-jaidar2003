@@ -1,6 +1,10 @@
 Changelog: Juan Manuel Aidar
 4th SPRINT
 
+0.2.6 - 2023-10-11
+ADDED:
+-Main's implementations
+ 
 0.2.5 - 2023-10-10
 ADDED: 
 - Implementation of a new fuctions at board class (i will have to improve it)
