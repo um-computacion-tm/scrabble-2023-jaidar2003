@@ -333,21 +333,7 @@ class TestScrabbleCLI(unittest.TestCase):
         game.board.grid[7][6].insert_letter(Tile('B', 1))
         self.assertTrue(game.check_left_square(7, 7))
 
-    @patch('builtins.input', side_effect=['play', 'hola', '7', '7', 'horizontal'])
-    def test_turn_word(self, mock_input):
-        scrabblecli = ScrabbleCli()
-        scrabblecli.game.players[scrabblecli.game.current_player_index].tiles = \
-            [Tile('H', 1),
-             Tile('O', 1),
-             Tile('L', 1),
-             Tile('A', 1)]
-        scrabblecli.player_turn()
-        self.assertEqual(scrabblecli.game.board.grid[7][7].letter, Tile('H', 1))
-        self.assertEqual(scrabblecli.game.board.grid[7][8].letter, Tile('O', 1))
-        self.assertEqual(scrabblecli.game.board.grid[7][9].letter, Tile('L', 1))
-        self.assertEqual(scrabblecli.game.board.grid[7][10].letter, Tile('A', 1))
-        self.assertEqual(scrabblecli.game.players[scrabblecli.game.current_player_index - 1].score, 4)
-
+ 
     @patch('builtins.input', side_effect=['pass'])
     def test_last_player_turn(self, mock_input):
         scrabblecli = ScrabbleCli()

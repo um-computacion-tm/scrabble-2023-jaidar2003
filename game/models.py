@@ -133,6 +133,7 @@ class ScrabbleCli:
             'draw': self.draw_tiles,
             'quit': self.end_game,
             'scores': self.show_scores,
+            'show board': self.show_board,
             'tiles': self.show_tiles,
         }
 
@@ -144,21 +145,30 @@ class ScrabbleCli:
         while not self.game_state == 'over':
             self.player_turn()
 
+    def show_board(self):
+        self.game.board.print_board()
 
     def player_turn(self):
-        action = input("What would you like to do? (play, pass, draw, scores, quit, tiles) ").lower()
+        action = input("What would you like to do? (show board, play, pass, draw, scores, quit, tiles) ").lower()
         chosen_action = self.VALID_ACTIONS.get(action)
         if chosen_action:
             chosen_action()
         else:
             options = ', '.join(self.VALID_ACTIONS.keys())
-            print(f"Action not valid, please choose from: {options}")
+            print(f"Action not valid, please choose an opcion from the followings...: {options}")
 
     def play_turn(self):
         word = input("Give a word to enter: ").lower()
         row = int(input("State starting row: "))
-        column = int(input("State starting column: "))
-        direction = input("State direction (horizontal or vertical: )")
+        column = int(input("Give starting column: "))
+        direction = input("Give direction (horizontal or vertical): ")
+
+        player_tiles = self.game.players[self.game.current_player_index].show_tiles()
+        for letter in word:
+            if letter not in player_tiles:
+                print(f"Letter '{letter}' not found in player's tiles")
+                return  # Salir de la función si la palabra no es válida
+
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         self.game.place_word(word, row, column, direction)
         self.game.players[self.game.current_player_index].forfeit_tiles(word)
@@ -167,12 +177,13 @@ class ScrabbleCli:
 
         self.game.board.print_board()
 
+
     def first_turn(self):
         print("Since there is no word in the center, please place your word there to start the game")
         word = input("Give a word to enter: ").lower()
         row = int(input("State starting row: "))
         column = int(input("State starting column: "))
-        direction = input("State direction (horizontal or vertical: )")
+        direction = input("State direction (horizontal or vertical: ")
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         if not self.valid_first_word(word, row, column, direction):
             self.game.place_word(word, row, column, direction)
@@ -209,7 +220,7 @@ class ScrabbleCli:
 
     def get_player_names(self):
         for i in range(len(self.game.players)):
-            self.game.players[i].set_name(input(f"Player {i + 1} state your name: "))
+            self.game.players[i].set_name(input(f"Player {i + 1}, write your nickname: "))
 
     def show_tiles(self):
         tiles = self.game.players[self.game.current_player_index].show_tiles()
@@ -375,7 +386,6 @@ class Board:
             if letter_multiplier is not None:
                 square.set_letter_multiplier(letter_multiplier)      
 
-
     def print_board(self):
         print('\n')
         header = "   " + "  ".join([f"{i:02d}" for i in range(1, self.cols + 1)])
@@ -391,8 +401,6 @@ class Board:
                     row_str += "  | "
             print(row_str)
             print("  +" + "---+" * self.cols)
-
-
 
 class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1, letter_multiplier: int =1):

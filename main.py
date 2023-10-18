@@ -1,4 +1,6 @@
-from game.models import ScrabbleCli
+from game.models import *
+
+print("Welcome to Srabble")
 
 if __name__ == '__main__':
     cli = ScrabbleCli()
