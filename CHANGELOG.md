@@ -1,6 +1,10 @@
 Changelog: Juan Manuel Aidar
 5th SPRINT
 
+0.2.8 - 2023-10-18
+ADDED:
+-Changes on show_tiles function at Player Class
+
 0.2.7 - 2023-10-17
 ADDED:
 -Changes on play_turn function at ScrabbleCLI, inclutions of show board function at the same class

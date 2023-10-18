@@ -501,7 +501,8 @@ class Player:
         return self.name
 
     def show_tiles(self):
-        return self.tiles
+        tile_strings = [f"{tile.get_letter()} ({tile.get_value()})" for tile in self.tiles]
+        return ", ".join(tile_strings)
         
 class Dictionary:
     def __init__(self, file_path):
