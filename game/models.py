@@ -169,8 +169,7 @@ class ScrabbleCli:
         for letter in word:
             if letter not in player_tiles:
                 print(f"Letter '{letter}' not found in player's tiles")
-                return  # Salir de la función si la palabra no es válida
-
+                return  
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         self.game.place_word(word, row, column, direction)
         self.game.players[self.game.current_player_index].forfeit_tiles(word)
@@ -345,10 +344,10 @@ class Board:
 
     def place_tile(self, tile, row, col):
         if not (0 <= row < self.rows) or not (0 <= col < self.cols):
-            return False  # Posición no válida
+            return False  
         square = self.grid[row][col]
         if square.has_tile():
-            return False  # La casilla ya está ocupada
+            return False  
         square.insert_letter(tile)
         return True
     
@@ -486,7 +485,7 @@ class Player:
     def give_requested_tiles(self, word):
         tiles = []
         for letter in word:
-            letter = letter.lower()  # Convertir la letra a mayúsculas
+            letter = letter.lower()  
             tile = self.find_letter_in_tiles(letter)
             if tile is not None:
                 tiles.append(tile)

@@ -400,6 +400,15 @@ class TestScrabbleCLI(unittest.TestCase):
         scrabblecli.first_turn()
         self.assertFalse(scrabblecli.game.board.grid[0][7].has_tile())
 
+ 
+    @patch('builtins.input', side_effect=['a', 'b', 'play', 'te', '7', '7', 'horizontal', 'quit'])
+    def test_play_te(self, mock_input):
+       cli = ScrabbleCli()
+       tiles = [Tile('T', 1), Tile('E', 1)]
+       cli.game.players[cli.game.current_player_index].tiles = tiles
+       cli.start_game()
+       self.assertEqual(cli.game.board.grid[7][7].letter, Tile('T', 1))
+
 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
@@ -615,7 +624,6 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(board.grid[row][col].letter.get_letter(), 'A')
 
-
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
         square = Square()
@@ -669,6 +677,12 @@ class TestSquare(unittest.TestCase):
         square.insert_letter(tile)
         self.assertEqual(square.letter, Tile('A', 1)) 
     
+    def test_give_info(self):
+        square = Square()
+        tile = Tile('A', 1)
+        square.insert_letter(tile)
+        self.assertEqual(repr(square), 'A:1')
+
 class TestPlayer(unittest.TestCase):
     def test_player(self):
         player = Player()
@@ -765,7 +779,5 @@ class TestDictionary(unittest.TestCase):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
     
-
-
 if __name__ == '__main__':
     unittest.main()
