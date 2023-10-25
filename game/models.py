@@ -41,7 +41,7 @@ class ScrabbleGame:
             raise WordNotValid
         if direction.lower() == 'horizontal':
             self.place_horizontal(word, starting_row, starting_column)
-        if direction.lower() == 'vertical':
+        elif direction.lower() == 'vertical':
             self.place_vertical(word, starting_row, starting_column)
 
     def place_horizontal(self, word, starting_row, starting_column):
@@ -57,7 +57,7 @@ class ScrabbleGame:
             if square.has_letter() and square.letter != tile:
                 raise WordNotValid("The word interferes with another word on the board.")
 
-            square.insert_letter(tile)
+            square.insert_letter(tile)  # Insertar la letra en el tablero
             current_col += 1
 
         self.last_word = word
@@ -75,11 +75,12 @@ class ScrabbleGame:
             if square.has_letter() and square.letter != tile:
                 raise WordNotValid("The word interferes with another word on the board.")
 
-            square.insert_letter(tile)
+            square.insert_letter(tile)  # Insertar la letra en el tablero
             current_row += 1
 
         self.last_word = word
         return True
+
 
     def get_scores(self):
         scores = {}
@@ -157,6 +158,7 @@ class ScrabbleCli:
             options = ', '.join(self.VALID_ACTIONS.keys())
             print(f"Action not valid, please choose an opcion from the followings...: {options}")
 
+
     def play_turn(self):
         word = input("Give a word to enter: ").lower()
         row = int(input("State starting row: "))
@@ -176,6 +178,7 @@ class ScrabbleCli:
         self.game.change_player_index()
 
         self.game.board.print_board()
+
 
 
     def first_turn(self):
@@ -256,6 +259,7 @@ class Tile:
 
     def get_letter(self):
         return self.letter
+
 
 LETTER_COUNT = {
     'A': (1, 12),
@@ -387,40 +391,44 @@ class Board:
                 square.set_letter_multiplier(letter_multiplier)      
 
     def print_board(self):
-        print('\n')
-        header = "   " + "  ".join([f"{i:02d}" for i in range(1, self.cols + 1)])
-        print(header)
-        print("  +" + "---+" * self.cols)
-
+        print('\n  |' + ''.join([f' {str(row_index).rjust(2)} ' for row_index in range(15)]))
         for row_index, row in enumerate(self.grid):
-            row_str = f"{row_index+1:02d} | "
-            for square in row:
-                if isinstance(square, Square) and square.has_letter():
-                    row_str += f"{square.letter.get_letter()} | "
-                else:
-                    row_str += "  | "
-            print(row_str)
-            print("  +" + "---+" * self.cols)
+            print(
+                str(row_index).rjust(2) +
+                '| ' +
+                ' '.join([repr(square) for square in row])
+            )
 
 class Square:
-    def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1, letter_multiplier: int =1):
+    def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1, letter_multiplier: int = 1):
         self.multiplier = multiplier
-        self.letter = letter
-        self.word_multiplier = word_multiplier 
+        self.letter = letter  
+        self.word_multiplier = word_multiplier
         self.letter_multiplier = letter_multiplier
+        self.multiplier_type = None
+        
     
     def has_letter(self):
         return self.letter is not None
-
-    def has_multiplier(self):
-        return self.multiplier > 1
     
     def has_tile(self):  
         return self.has_letter()
 
+    def has_multiplier(self):
+        return self.multiplier > 1
+    
+    def get_multiplier_type(self):
+        return self.multiplier_type
+    
+    def get_multiplier(self):
+        return self.multiplier
+
     def insert_letter(self, letter):
         if not self.has_letter():
             self.letter = letter
+
+    def set_multiplier_type(self, word):
+        self.multiplier_type = word
 
     def multiplier_is_up(self):
         if self.word_multiplier > 1:
@@ -430,18 +438,29 @@ class Square:
         if not self.has_tile():
             self.letter = letter
         self.multiplier_is_up()
+
+    def set_multiplier(self, amount):
+        self.multiplier = amount
+
+    def get_tile(self):
+        return self.letter
  
     def individual_score(self):
         return self.letter.get_value() * self.multiplier
-
-    def __repr__(self):
-        return f"Square(multiplier={self.multiplier}, letter={self.letter}, word_multiplier={self.word_multiplier})"
 
     def set_word_multiplier(self, amount):
         self.multiplier = amount
 
     def set_letter_multiplier(self, amount):
         self.multiplier = amount
+
+    def __repr__(self):
+        if self.letter:
+            return repr(self.letter)
+        if self.multiplier > 1:
+            return f'{"W" if self.multiplier_type == "word" else "L"}x{self.multiplier}'
+        else:
+            return '   '
         
 class Player:
     def __init__(self):
@@ -465,15 +484,17 @@ class Player:
         self.tiles.extend(bag.take(1))
 
     def give_requested_tiles(self, word):
-        letters = []
+        tiles = []
         for letter in word:
+            letter = letter.lower()  # Convertir la letra a mayúsculas
             tile = self.find_letter_in_tiles(letter)
             if tile is not None:
-                letters.append(tile)
+                tiles.append(tile)
             else:
                 print(f"Letter '{letter}' not found in player's tiles")
                 return None
-        return letters
+        return tiles
+
 
     def find_letter_in_tiles(self, letter):
         for tile in self.tiles:

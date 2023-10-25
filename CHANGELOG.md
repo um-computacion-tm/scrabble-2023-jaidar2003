@@ -1,11 +1,15 @@
 Changelog: Juan Manuel Aidar
 5th SPRINT
 
+0.3.0 - 2023-10-20
+ADDED:
+-Reimplementations of __repr__ function at Square class and print_board at Board class
+
 0.2.9 - 2023-10-20
 ADDED:
 -Implementation of a new test, which its doesent run and i dont know how to make it run 
 
-0.2.8 - 2023-n-18
+0.2.8 - 2023-10-18
 ADDED:
 -Changes on show_tiles function at Player Class
 
