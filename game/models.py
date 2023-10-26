@@ -166,9 +166,12 @@ class ScrabbleCli:
         direction = input("Give direction (horizontal or vertical): ")
 
         player_tiles = self.game.players[self.game.current_player_index].show_tiles()
+        print(f'player_tiles={player_tiles}')
         for letter in word:
+            print(f'letter={letter}')
             if letter not in player_tiles:
-                print(f"Letter '{letter}' not found in player's tiles")
+                print(f"Letter '{letter}' not found in player's tiles porque no hay forma que una letter esté incluída en una lista de Tiles")
+                print('sería esperable que una letter esté incluída en una palabra o que una Tile esté incluída en una lista de Tiles, la programación es muy discriminadora')
                 return  
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         self.game.place_word(word, row, column, direction)
