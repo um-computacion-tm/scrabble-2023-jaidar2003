@@ -173,6 +173,8 @@ class ScrabbleCli:
                 print(f"Letter '{letter}' not found in player's tiles porque no hay forma que una letter esté incluída en una lista de Tiles")
                 print('sería esperable que una letter esté incluída en una palabra o que una Tile esté incluída en una lista de Tiles, la programación es muy discriminadora')
                 return  
+        print(self.game.players[self.game.current_player_index].give_requested_tiles(word))
+    
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         self.game.place_word(word, row, column, direction)
         self.game.players[self.game.current_player_index].forfeit_tiles(word)
@@ -180,7 +182,6 @@ class ScrabbleCli:
         self.game.change_player_index()
 
         self.game.board.print_board()
-
 
 
     def first_turn(self):
@@ -239,7 +240,7 @@ class ScrabbleCli:
         mock_game = ScrabbleGame(1)
         mock_game.place_word(word, starting_row, starting_column, direction)
         return mock_game.board.is_board_empty()
-    
+
 class Tile:
     def __init__(self, letter, value):
         self.letter = letter
@@ -253,15 +254,14 @@ class Tile:
     def individual_score(self):
         return self.value
 
-    def __repr__(self):
-        return f"Tile(letter='{self.letter}', value={self.value})"
-
     def get_value(self):
         return self.value
 
     def get_letter(self):
         return self.letter
 
+    def __repr__(self):
+        return f"{self.letter}:{self.value}"
 
 LETTER_COUNT = {
     'A': (1, 12),
@@ -403,6 +403,7 @@ class Board:
 
 class Square:
     def __init__(self, multiplier: int = 1, letter: Tile = None, word_multiplier: int = 1, letter_multiplier: int = 1):
+
         self.multiplier = multiplier
         self.letter = letter  
         self.word_multiplier = word_multiplier
@@ -490,11 +491,13 @@ class Player:
         for letter in word:
             letter = letter.lower()  
             tile = self.find_letter_in_tiles(letter)
+            print(tile)
             if tile is not None:
                 tiles.append(tile)
             else:
                 print(f"Letter '{letter}' not found in player's tiles")
                 return None
+        print(tiles)
         return tiles
 
 

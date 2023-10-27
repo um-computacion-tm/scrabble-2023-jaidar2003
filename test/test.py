@@ -22,7 +22,6 @@ class TestScrabble(unittest.TestCase):
         self.assertIsNotNone(game.tilebag)
         self.assertEqual(len(game.players), 1)
 
-
     def test_word_validation(self):
         game = ScrabbleGame(1)
         word = [Tile('A', 1),
@@ -400,7 +399,7 @@ class TestScrabbleCLI(unittest.TestCase):
         scrabblecli.first_turn()
         self.assertFalse(scrabblecli.game.board.grid[0][7].has_tile())
 
- 
+
     @patch('builtins.input', side_effect=['a', 'b', 'play', 'te', '7', '7', 'horizontal', 'quit'])
     def test_play_te(self, mock_input):
        cli = ScrabbleCli()
@@ -431,18 +430,6 @@ class TestTiles(unittest.TestCase):
 
         self.assertTrue(tile1 == tile2)
         self.assertTrue(tile2 == tile1)
-
-    def test_check_word_validity_valid_word(self):
-        game = ScrabbleGame(1)
-        game.dictionary = Dictionary('dictionaries/dictionary.txt')
-        valid_word = [Tile('C', 1), Tile('A', 1), Tile('S', 1), Tile('A', 1)]
-        self.assertTrue(game.check_word_validity(valid_word))
-
-    def test_check_word_validity_invalid_word(self):
-        game = ScrabbleGame(1)
-        game.dictionary = Dictionary('dictionaries/dictionary.txt')
-        invalid_word = [Tile('W', 1), Tile('O', 1), Tile('R', 1), Tile('D', 1)]
-        self.assertFalse(game.check_word_validity(invalid_word))
 
     def test_neq_different_objects(self):
         tile1 = Tile('A', 1)
@@ -758,6 +745,7 @@ class TestPlayer(unittest.TestCase):
         square.put_tile(tile2)
         self.assertEqual(square.letter, tile1)
 
+
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
@@ -778,6 +766,19 @@ class TestDictionary(unittest.TestCase):
     def test_word_false(self):
         dictionary = Dictionary('dictionaries/dictionary.txt')
         self.assertFalse(dictionary.has_word('volkswagen'))
+
+    def test_check_word_validity_valid_word(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+        valid_word = [Tile('C', 1), Tile('A', 1), Tile('S', 1), Tile('A', 1)]
+        self.assertTrue(game.check_word_validity(valid_word))
+
+    def test_check_word_validity_invalid_word(self):
+        game = ScrabbleGame(1)
+        game.dictionary = Dictionary('dictionaries/dictionary.txt')
+        invalid_word = [Tile('W', 1), Tile('O', 1), Tile('R', 1), Tile('D', 1)]
+        self.assertFalse(game.check_word_validity(invalid_word))
+
     
 if __name__ == '__main__':
     unittest.main()

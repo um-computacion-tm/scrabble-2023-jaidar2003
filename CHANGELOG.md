@@ -1,4 +1,13 @@
 Changelog: Juan Manuel Aidar
+
+6th SPRINT
+
+0.3.2 - 2023-10-26
+ADDED:
+-Small changes at Tile Class, i still dont know how to fix the problem out :(
+0.3.1 - 2023-10-26
+ADDED:
+- Mr Quinteros cloned my proyect and he wrote down some cloues, which i didnt know how to use
 5th SPRINT
 
 0.3.0 - 2023-10-20
