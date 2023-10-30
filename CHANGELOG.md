@@ -2,12 +2,21 @@ Changelog: Juan Manuel Aidar
 
 6th SPRINT
 
+0.3.3 - 2023-10-30
+ADDED:
+-I figured out how to fix my problem with tiles; i implementate a function call get_letter
+
 0.3.2 - 2023-10-26
 ADDED:
 -Small changes at Tile Class, i still dont know how to fix the problem out :(
+
 0.3.1 - 2023-10-26
 ADDED:
-- Mr Quinteros cloned my proyect and he wrote down some cloues, which i didnt know how to use
+-Mr Quinteros cloned my proyect and he wrote down some cloues, which i didnt know how to use
+
+
+
+
 5th SPRINT
 
 0.3.0 - 2023-10-20
@@ -25,6 +34,9 @@ ADDED:
 0.2.7 - 2023-10-17
 ADDED:
 -Changes on play_turn function at ScrabbleCLI, inclutions of show board function at the same class
+
+
+
 
 4th SPRINT
 
@@ -52,6 +64,9 @@ ADDED:
 ADDED:
 - Implementation of some fucntions call get_player, show_tiles, first_turn and cakid+first_word at ScrabbleCLI and some others like give_requesr_tiles, find_letter_in_tiles, forfeit_tiles and forfeit_tile at Player
 
+
+
+
 3th SPRINT
 
 0.2.0 - 2023-09-27
@@ -77,6 +92,9 @@ ADDED:
 0.1.5 - 2023-09-15
 ADDED:
 - Reimplementation of the Scrabble class, deleting of some functions; to be add to other class later
+
+
+
 
 2nd SPRINT
 
@@ -107,6 +125,9 @@ ADDED:
 0.0.8 - 2023-09-01
 ADDED:
 - Implementation of a Rack class
+
+
+
 
 1th SPRINT
 

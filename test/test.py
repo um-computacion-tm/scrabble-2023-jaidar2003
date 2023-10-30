@@ -745,6 +745,13 @@ class TestPlayer(unittest.TestCase):
         square.put_tile(tile2)
         self.assertEqual(square.letter, tile1)
 
+    def test_get_letters(self):
+        player = Player()
+        player.tiles = [Tile('A', 1),Tile('B',3)]
+
+        expected_letters = ['A', 'B']
+        self.assertEqual(player.get_letters(), expected_letters)   
+
 
 class TestDictionary(unittest.TestCase):
     def test_dictionary(self):

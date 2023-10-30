@@ -158,21 +158,20 @@ class ScrabbleCli:
             options = ', '.join(self.VALID_ACTIONS.keys())
             print(f"Action not valid, please choose an opcion from the followings...: {options}")
 
-
     def play_turn(self):
-        word = input("Give a word to enter: ").lower()
-        row = int(input("State starting row: "))
-        column = int(input("Give starting column: "))
+        word = input("Give a word to enter: ").upper()
+        row = int(input("Give an Y position: "))
+        column = int(input("Give an X position: "))
         direction = input("Give direction (horizontal or vertical): ")
 
-        player_tiles = self.game.players[self.game.current_player_index].show_tiles()
+        player_tiles = self.game.players[self.game.current_player_index].get_letters()
         print(f'player_tiles={player_tiles}')
         for letter in word:
             print(f'letter={letter}')
             if letter not in player_tiles:
-                print(f"Letter '{letter}' not found in player's tiles porque no hay forma que una letter esté incluída en una lista de Tiles")
-                print('sería esperable que una letter esté incluída en una palabra o que una Tile esté incluída en una lista de Tiles, la programación es muy discriminadora')
+                print(f"Letter '{letter}' not found in player's tiles")
                 return  
+
         print(self.game.players[self.game.current_player_index].give_requested_tiles(word))
     
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
@@ -186,9 +185,9 @@ class ScrabbleCli:
 
     def first_turn(self):
         print("Since there is no word in the center, please place your word there to start the game")
-        word = input("Give a word to enter: ").lower()
-        row = int(input("State starting row: "))
-        column = int(input("State starting column: "))
+        word = input("Give a word to enter: ").upper()
+        row = int(input("State starting X: "))
+        column = int(input("State starting : "))
         direction = input("State direction (horizontal or vertical: ")
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         if not self.valid_first_word(word, row, column, direction):
@@ -527,9 +526,12 @@ class Player:
         return self.name
 
     def show_tiles(self):
-        tile_strings = [f"{tile.get_letter()} ({tile.get_value()})" for tile in self.tiles]
-        return ", ".join(tile_strings)
-        
+       return self.tiles
+    
+    def get_letters(self):
+        return [tile.letter for tile in self.tiles]
+    
+
 class Dictionary:
     def __init__(self, file_path):
         self.words = self.load_words(file_path)
@@ -540,4 +542,4 @@ class Dictionary:
 
     def has_word(self, word):
         return word in self.words
-    
+
