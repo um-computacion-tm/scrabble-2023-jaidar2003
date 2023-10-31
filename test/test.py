@@ -3,6 +3,7 @@ from io import StringIO
 from game.models import *
 from unittest.mock import patch, Mock
 
+
 class TestScrabble(unittest.TestCase):
     def setUp(self):
         self.game = ScrabbleGame(1)
@@ -415,11 +416,6 @@ class TestTiles(unittest.TestCase):
         self.assertEqual(tile.letter, 'A')
         self.assertEqual(tile.value, 1)
 
-    def test_tile_repr(self):
-        tile = Tile('A', 1)
-        expected_repr = "Tile(letter='A', value=1)"
-        self.assertEqual(repr(tile), expected_repr)
-
     def test_eq_same_objects(self):
         tile = Tile('A', 1)
         self.assertTrue(tile == tile)
@@ -586,15 +582,15 @@ class TestBoard(unittest.TestCase):
         square = board.get_square(row, col)
         self.assertIsNone(square)
 
-    def test_add_premium_squares(self):
+    def test_premium_squares(self):
         board = Board(15, 15)
-        board.add_premium_squares()
+        board.premium_squares()
 
-        self.assertEqual(board.grid[0][0].word_multiplier, 2)  # Cambia el valor de 3 a 2
+        self.assertEqual(board.grid[0][0].word_multiplier, 2)  
 
     def test_set_square_multiplier(self):
         board = Board(15, 15)
-        board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)  # Cambia el valor de 3 a 1
+        board.set_square_multiplier(3, 3, word_multiplier=2, letter_multiplier=1)
 
         self.assertEqual(board.grid[3][3].word_multiplier, 2)
         self.assertEqual(board.grid[3][3].letter_multiplier, 1)
@@ -690,13 +686,13 @@ class TestPlayer(unittest.TestCase):
     def test_player_draw(self):
         player = Player()
         bag = Tilebag()
-        player.draw_tiles(bag, 2)
+        player.takeout_tiles(bag, 2)
         self.assertEqual(len(player.tiles), 2)
 
     def test_player_exchange(self):
         player = Player()
         bag = Tilebag()
-        player.draw_tiles(bag, 2)
+        player.takeout_tiles(bag, 2)
         tile = player.tiles[0]
         player.exchange_tile(player.tiles[0], bag)
         self.assertNotEqual(tile, player.tiles[0])

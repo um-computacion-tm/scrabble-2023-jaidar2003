@@ -95,7 +95,7 @@ class ScrabbleGame:
         return self.dictionary.has_word(check.lower())
 
     def check_first_turn(self):
-        return self.board.is_board_empty()
+        return self.board.board_empty()
 
     def check_left_square(self, row, col):
         if col > 0:
@@ -129,20 +129,54 @@ class ScrabbleCli:
         self.game = ScrabbleGame(PLAYERS)
         self.game_state = None
         self.VALID_ACTIONS = {
+            'rules': self.game_rules,
+            'elements': self.game_elements,
             'pass': self.pass_turn,
             'play': self.play_turn,
-            'draw': self.draw_tiles,
+            'draw': self.takeout_tiles,
             'quit': self.end_game,
             'scores': self.show_scores,
             'show board': self.show_board,
             'tiles': self.show_tiles,
         }
 
+    def game_rules(self):
+            scrabbles_rules = """
+            Scrabble rules:
+                        
+                        1. Aim of the game: The aim of Scrabble is to form words on a game board using letters with assigned values to obtain the highest possible score.
+                        
+                        2. The board: The Scrabble board is a square of 15x15 squares. Some squares have special values and bonuses.
+                        
+                        3. Tiles: The game is played with tiles representing letters. Each tile has a numerical value that determines its score. 
+                        The number of tiles and their value vary according to the language you are playing in.
+                        
+                        4. Start of the game: Each player takes 7 tiles at random from the set of tiles, which are replenished after each play.
+                        
+                        5. Words: Players must form words on the board using their counters. Words must be formed from left to right or top to bottom, 
+                        and must be connected to at least one letter already on the board.
+                        
+                        6. Scoring: Each letter has a numerical value assigned to it. The score of a word is the sum of the letter values in that word. In addition, the board has bonus squares, 
+                        the board has bonus squares that can double or triple the score of a word or a letter.
+                        
+                        7. Shifting tiles: A player may choose to shift some or all of his tiles on his turn, but this costs him a full turn.
+                        
+                        8. End of the game: The game ends when all the tiles have been used up and a player has used all his tiles or when no more valid moves can be made.
+                        
+                        9. Winner: The player with the highest score at the end of the game wins.
+                        
+                        10. Valid words: Words must be valid words in the language you are using, and can be consulted in an official dictionary if a dispute arises.
+                        """
+            print(scrabbles_rules)
+
+    def game_elements(self):
+        print("1 board, 100 tiles, 4 stands, 1 bag of tiles, 1 regulation.")
+
     def start_game(self):
         self.game_state_start()
         self.get_player_names()
         self.start_player_tiles()
-        self.game.board.add_premium_squares()
+        self.game.board.premium_squares()
         while not self.game_state == 'over':
             self.player_turn()
 
@@ -150,7 +184,7 @@ class ScrabbleCli:
         self.game.board.print_board()
 
     def player_turn(self):
-        action = input("What would you like to do? (show board, play, pass, draw, scores, quit, tiles) ").lower()
+        action = input("What would you like to do? (rules, elemets, show board, play, pass, draw, scores, quit, tiles) ").lower()
         chosen_action = self.VALID_ACTIONS.get(action)
         if chosen_action:
             chosen_action()
@@ -165,9 +199,8 @@ class ScrabbleCli:
         direction = input("Give direction (horizontal or vertical): ")
 
         player_tiles = self.game.players[self.game.current_player_index].get_letters()
-        print(f'player_tiles={player_tiles}')
         for letter in word:
-            print(f'letter={letter}')
+
             if letter not in player_tiles:
                 print(f"Letter '{letter}' not found in player's tiles")
                 return  
@@ -176,7 +209,7 @@ class ScrabbleCli:
     
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         self.game.place_word(word, row, column, direction)
-        self.game.players[self.game.current_player_index].forfeit_tiles(word)
+        self.game.players[self.game.current_player_index].loss_tiles(word)
         self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
         self.game.change_player_index()
 
@@ -192,16 +225,16 @@ class ScrabbleCli:
         word = self.game.players[self.game.current_player_index].give_requested_tiles(word)
         if not self.valid_first_word(word, row, column, direction):
             self.game.place_word(word, row, column, direction)
-            self.game.players[self.game.current_player_index].forfeit_tiles(word)
+            self.game.players[self.game.current_player_index].loss_tiles(word)
             self.game.players[self.game.current_player_index].increase_score(self.game.word_score(self.game.last_word))
             self.game.change_player_index()
 
     def pass_turn(self):
         self.game.change_player_index()
 
-    def draw_tiles(self):
+    def takeout_tiles(self):
         amount = int(input("How many tiles do you want to draw? "))
-        self.game.players[self.game.current_player_index].draw_tiles(self.game.tilebag, amount)
+        self.game.players[self.game.current_player_index].takeout_tiles(self.game.tilebag, amount)
         self.game.change_player_index()
 
     def check_tiles(self):
@@ -221,7 +254,7 @@ class ScrabbleCli:
 
     def start_player_tiles(self):
         for player in self.game.players:
-            player.draw_tiles(self.game.tilebag, 7)
+            player.takeout_tiles(self.game.tilebag, 7)
 
     def get_player_names(self):
         for i in range(len(self.game.players)):
@@ -238,7 +271,7 @@ class ScrabbleCli:
     def valid_first_word(word, starting_row, starting_column, direction):
         mock_game = ScrabbleGame(1)
         mock_game.place_word(word, starting_row, starting_column, direction)
-        return mock_game.board.is_board_empty()
+        return mock_game.board.board_empty()
 
 class Tile:
     def __init__(self, letter, value):
@@ -249,6 +282,9 @@ class Tile:
         if isinstance(other, Tile):
             return self.letter == other.letter and self.value == other.value
         return False
+    
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def individual_score(self):
         return self.value
@@ -367,10 +403,10 @@ class Board:
                 return square.get_letter()
         return None
     
-    def is_board_empty(self):
+    def board_empty(self):
         return not self.grid[7][7].has_tile()
     
-    def add_premium_squares(self):
+    def premium_squares(self):
         for row, col in self.TRIPLE_WORD_SCORE:
             self.grid[row][col].set_word_multiplier(3)
 
@@ -473,7 +509,7 @@ class Player:
     def increase_score(self, points):
         self.score += points
 
-    def draw_tiles(self, bag: Tilebag, num_tiles):
+    def takeout_tiles(self, bag: Tilebag, num_tiles):
         self.tiles.extend(bag.take(num_tiles))
 
     def exchange_tile(self, tile, bag: Tilebag):
@@ -506,11 +542,11 @@ class Player:
                 return tile
         return None
 
-    def forfeit_tiles(self, word):
+    def loss_tiles(self, word):
         for tile in word:
-            self.forfeit_tile(tile)
+            self.loss_a_tile(tile)
 
-    def forfeit_tile(self, tile):
+    def loss_a_tile(self, tile):
         for i in range(len(self.tiles)):
             if self.tiles[i].get_letter() == tile.get_letter():
                 self.tiles.pop(i)
@@ -542,4 +578,3 @@ class Dictionary:
 
     def has_word(self, word):
         return word in self.words
-

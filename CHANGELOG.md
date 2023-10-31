@@ -2,6 +2,10 @@ Changelog: Juan Manuel Aidar
 
 6th SPRINT
 
+0.3.4 -2023-10-31
+ADDED:
+-Small Changes at Cli, i include an opcion which shows the game rules
+
 0.3.3 - 2023-10-30
 ADDED:
 -I figured out how to fix my problem with tiles; i implementate a function call get_letter
