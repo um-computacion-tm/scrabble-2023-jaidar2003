@@ -47,7 +47,7 @@ and must be connected to at least one letter already on the board.
 git clone https://github.com/um-computacion-tm/scrabble-2023-jaidar2003
 ```
 
-# Disclaimere routine and it f
+# Disclaimer
 
 When I wrote this code, only Allah and I knew how it worked,
 now only Allah knows it
@@ -55,7 +55,7 @@ now only Allah knows it
 Thereforce if yu are trying to optimize the routine and it fails (most surely), please 
 increse the counter as a warning to the next person:
 
-total_hours_used_on_here = 254
+total_hours_here = 254
 
 # Student Data
 
