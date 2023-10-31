@@ -1,9 +1,75 @@
 Changelog: Juan Manuel Aidar
+
+6th SPRINT
+
+0.3.4 -2023-10-31
+ADDED:
+-Small Changes at Cli, i include an opcion which shows the game rules
+
+0.3.3 - 2023-10-30
+ADDED:
+-I figured out how to fix my problem with tiles; i implementate a function call get_letter
+
+0.3.2 - 2023-10-26
+ADDED:
+-Small changes at Tile Class, i still dont know how to fix the problem out :(
+
+0.3.1 - 2023-10-26
+ADDED:
+-Mr Quinteros cloned my proyect and he wrote down some cloues, which i didnt know how to use
+
+
+
+
+5th SPRINT
+
+0.3.0 - 2023-10-20
+ADDED:
+-Reimplementations of __repr__ function at Square class and print_board at Board class
+
+0.2.9 - 2023-10-20
+ADDED:
+-Implementation of a new test, which its doesent run and i dont know how to make it run 
+
+0.2.8 - 2023-10-18
+ADDED:
+-Changes on show_tiles function at Player Class
+
+0.2.7 - 2023-10-17
+ADDED:
+-Changes on play_turn function at ScrabbleCLI, inclutions of show board function at the same class
+
+
+
+
 4th SPRINT
+
+0.2.6 - 2023-10-11
+ADDED:
+-Main's implementations
+ 
+0.2.5 - 2023-10-10
+ADDED: 
+- Implementation of a new fuctions at board class (i will have to improve it)
+
+0.2.4 - 2023-10-05
+ADDED: 
+- I tab 2 fuctions which i forgot to tab before
+
+0.2.3 - 2023-10-03
+ADDED:
+- Implementation of some fuctions and i took out rack and word classes 
+
+0.2.2 - 2023-10-01
+ADDED:
+- Implementation of a test which wasnt complete before (test_rack_replenish_rack) at Rack Class
 
 0.2.1 - 2023-09-30
 ADDED:
 - Implementation of some fucntions call get_player, show_tiles, first_turn and cakid+first_word at ScrabbleCLI and some others like give_requesr_tiles, find_letter_in_tiles, forfeit_tiles and forfeit_tile at Player
+
+
+
 
 3th SPRINT
 
@@ -30,6 +96,9 @@ ADDED:
 0.1.5 - 2023-09-15
 ADDED:
 - Reimplementation of the Scrabble class, deleting of some functions; to be add to other class later
+
+
+
 
 2nd SPRINT
 
@@ -60,6 +129,9 @@ ADDED:
 0.0.8 - 2023-09-01
 ADDED:
 - Implementation of a Rack class
+
+
+
 
 1th SPRINT
 
