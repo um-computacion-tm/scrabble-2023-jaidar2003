@@ -1,6 +1,15 @@
+from game.board import *
+from game.main import *
+from game.models import *
+from game.player import *
+from game.scrabble import *
+from game.scrablecli import *
+from game.square import *
+from game.tile import *
+from game.tilebag import *
 import unittest
 from io import StringIO
-from game.models import *
+
 from unittest.mock import patch, Mock
 
 
@@ -409,6 +418,20 @@ class TestScrabbleCLI(unittest.TestCase):
        cli.start_game()
        self.assertEqual(cli.game.board.grid[7][7].letter, Tile('T', 1))
 
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_show_player_scores(self, mock_stdout):
+        cli = ScrabbleCli()
+        cli.show_scores()
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_show_player_board(self, mock_stdout):
+        cli = ScrabbleCli()
+        cli.show_board()
+
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_show_player_tiles(self, mock_stdout):
+        cli = ScrabbleCli()
+        cli.show_tiles()
 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
@@ -607,6 +630,7 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(board.grid[row][col].letter.get_letter(), 'A')
 
+
 class TestSquare(unittest.TestCase):
     def test_empty_square(self):
         square = Square()
@@ -782,6 +806,10 @@ class TestDictionary(unittest.TestCase):
         invalid_word = [Tile('W', 1), Tile('O', 1), Tile('R', 1), Tile('D', 1)]
         self.assertFalse(game.check_word_validity(invalid_word))
 
+class TestMain(unittest.TestCase):
+    @patch.object(ScrabbleCli, 'start_game')
+    def test_main(self, *args):
+        main()
     
 if __name__ == '__main__':
     unittest.main()
