@@ -47,6 +47,19 @@ and must be connected to at least one letter already on the board.
 git clone https://github.com/um-computacion-tm/scrabble-2023-jaidar2003
 ```
 
+# How To Run Scrabble In Docker
+
+1. Make sure to have docker installed. You can install Docker from Docker oficial web site (https://www.docker.com/get-started) if you dont have it. 
+
+2. Install Git using in cmd: -apt-get install git-
+
+3. Clone the repository using: -git clone git@github.com:um-computacion-tm/scrabble-2023-jaidar2003.git
+4. Navigate to the repository directory: cd /.../scrabble-2023-jaidar2003.git
+
+5. Build the Docker image: -docker build -t image_name .-  (In image name give it the name you want)
+
+6. Run the Docker image: -docker run -it image_name-
+
 # Disclaimer
 
 When I wrote this code, only Allah and I knew how it worked,
