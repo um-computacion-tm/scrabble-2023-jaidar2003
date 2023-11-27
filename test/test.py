@@ -322,6 +322,8 @@ class TestScrabble(unittest.TestCase):
         game.board.grid[8][7].insert_letter(Tile('E', 1))
         self.assertTrue(game.check_down_square(7, 7))
 
+
+
 class TestScrabbleCLI(unittest.TestCase):
     def test_game_over(self):
         scrabblecli = ScrabbleCli()  
@@ -432,6 +434,50 @@ class TestScrabbleCLI(unittest.TestCase):
     def test_show_player_tiles(self, mock_stdout):
         cli = ScrabbleCli()
         cli.show_tiles()
+
+    def test_change_player_index(self):
+        game = ScrabbleGame(2)
+        initial_index = game.current_player_index
+
+        game.change_player_index()
+        self.assertEqual(game.current_player_index, 1 if initial_index == 0 else 0)
+
+        game.change_player_index()
+        self.assertEqual(game.current_player_index, initial_index)
+
+    def test_check_word_left_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_word_left(7, 7))
+
+    def test_check_word_left_non_empty(self):
+        game = ScrabbleGame(1)
+        word = [Tile('F', 1), Tile('G', 2), Tile('H', 3)]
+        game.place_horizontal(word, 7, 4)
+        self.assertTrue(game.check_word_left(7, 7))
+
+    def test_check_up_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[6][7].insert_letter(Tile('D', 1))
+        self.assertTrue(game.check_up_square(7, 7))
+
+    def test_check_down_square_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_down_square(7, 7))
+
+    def test_check_down_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[8][7].insert_letter(Tile('E', 1))
+        self.assertTrue(game.check_down_square(7, 7))
+
+    def test_check_down_square_empty(self):
+        game = ScrabbleGame(1)
+        self.assertFalse(game.check_down_square(7, 7))
+
+    def test_check_down_square_occupied(self):
+        game = ScrabbleGame(1)
+        game.board.grid[8][7].insert_letter(Tile('E', 1))
+        self.assertTrue(game.check_down_square(7, 7))
+
 
 class TestTiles(unittest.TestCase):
     def test_tile(self):
